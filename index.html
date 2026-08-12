@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fogão Aceso — Comida de casa, na sua mesa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --verde: #1F3327;
+  --verde-2: #2A4433;
+  --mostarda: #E8A33D;
+  --mostarda-escura: #B87A1E;
+  --tijolo: #B23A2E;
+  --tijolo-escuro: #832A21;
+  --papel: #F3E9D2;
+  --papel-2: #EADFC2;
+  --creme: #FBF6EA;
+  --tinta: #2B2118;
+  --tinta-suave: #5B4E3E;
+  --teal: #3C6E71;
+  --linha: #D8C9A3;
+  --radius: 14px;
+  --sombra: 0 10px 24px rgba(43,33,24,0.14);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--papel);
+  color:var(--tinta);
+  font-family:'Work Sans', sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.display{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin:0;
+}
+.handwritten{
+  font-family:'Caveat', cursive;
+  font-weight:700;
+}
+img{max-width:100%;display:block;}
+button{font-family:inherit;cursor:pointer;}
+a{color:inherit;text-decoration:none;}
+.container{max-width:1180px;margin:0 auto;padding:0 28px;}
+::selection{background:var(--mostarda);color:var(--tinta);}
+
+/* ---------- FOCUS ---------- */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
+  outline:3px solid var(--mostarda);
+  outline-offset:2px;
+}
+
+/* ---------- HEADER ---------- */
+header{
+  position:sticky;top:0;z-index:60;
+  background:var(--verde);
+  border-bottom:3px solid var(--mostarda);
+}
+.header-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 28px;max-width:1180px;margin:0 auto;gap:20px;
+}
+.logo{
+  display:flex;align-items:center;gap:10px;color:var(--creme);
+}
+.logo .brasa{
+  width:36px;height:36px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, var(--mostarda), var(--tijolo) 70%);
+  flex-shrink:0;
+}
+.logo-text{display:flex;flex-direction:column;line-height:1.05;}
+.logo-text .nome{font-family:'Fraunces',serif;font-weight:700;font-size:21px;color:var(--creme);}
+.logo-text .slogan{font-family:'Caveat',cursive;font-size:14px;color:var(--mostarda);font-weight:600;}
+
+nav.categorias{
+  display:flex;gap:26px;flex:1;justify-content:center;
+}
+nav.categorias button{
+  background:none;border:none;color:var(--creme);opacity:0.78;
+  font-size:15px;font-weight:500;padding:6px 2px;border-bottom:2px solid transparent;
+  transition:opacity .15s, border-color .15s;
+}
+nav.categorias button:hover{opacity:1;}
+nav.categorias button.ativo{opacity:1;border-color:var(--mostarda);}
+
+.header-actions{display:flex;align-items:center;gap:10px;}
+.icon-btn{
+  position:relative;background:var(--verde-2);border:1px solid rgba(251,246,234,0.15);
+  color:var(--creme);width:42px;height:42px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s, transform .1s;
+}
+.icon-btn:hover{background:#345040;}
+.icon-btn:active{transform:scale(0.94);}
+.icon-btn svg{width:19px;height:19px;}
+.badge{
+  position:absolute;top:-4px;right:-4px;background:var(--tijolo);color:var(--creme);
+  font-size:11px;font-weight:700;min-width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;padding:0 4px;
+  border:2px solid var(--verde);
+}
+.badge.oculta{display:none;}
+.menu-mobile-btn{display:none;background:none;border:none;color:var(--creme);}
+
+/* ---------- HERO ---------- */
+.hero{
+  display:grid;grid-template-columns:1.1fr 0.9fr;
+  background:var(--verde);color:var(--creme);
+}
+.hero-esquerda{
+  padding:76px 28px 76px 0;max-width:1180px;margin:0 auto;width:100%;
+  display:flex;flex-direction:column;justify-content:center;gap:22px;
+  padding-left:28px;
+}
+.hero-esquerda .eyebrow{
+  font-family:'Caveat',cursive;font-size:20px;color:var(--mostarda);font-weight:700;
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow .traco{width:34px;height:2px;background:var(--mostarda);display:inline-block;}
+.hero-esquerda h1{
+  font-size:52px;line-height:1.06;color:var(--creme);max-width:560px;
+}
+.hero-esquerda h1 em{color:var(--mostarda);font-style:italic;}
+.hero-esquerda p{
+  font-size:17px;color:#D8DED2;max-width:460px;line-height:1.6;margin:0;
+}
+.hero-ctas{display:flex;gap:14px;margin-top:6px;flex-wrap:wrap;}
+.btn{
+  border:none;border-radius:999px;padding:14px 26px;font-weight:600;font-size:15px;
+  transition:transform .12s, box-shadow .12s, background .15s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn:active{transform:scale(0.97);}
+.btn-mostarda{background:var(--mostarda);color:var(--tinta);}
+.btn-mostarda:hover{background:#F0AE52;box-shadow:0 6px 16px rgba(232,163,61,0.35);}
+.btn-outline{background:transparent;color:var(--creme);border:1.5px solid rgba(251,246,234,0.4);}
+.btn-outline:hover{border-color:var(--creme);}
+.btn-tijolo{background:var(--tijolo);color:var(--creme);}
+.btn-tijolo:hover{background:#C6453A;}
+
+.hero-direita{
+  position:relative;background:var(--papel);
+  border-left:3px solid var(--mostarda);
+  display:flex;align-items:center;justify-content:center;padding:50px 28px;
+}
+.carimbo{
+  position:absolute;top:34px;right:38px;
+  width:110px;height:110px;border-radius:50%;
+  border:3px solid var(--tijolo);color:var(--tijolo);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  transform:rotate(-14deg);
+  font-family:'Fraunces',serif;font-weight:700;font-size:13px;line-height:1.15;
+  text-transform:uppercase;letter-spacing:0.03em;
+  background:rgba(178,58,46,0.05);
+}
+.pratos-hoje{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:380px;
+}
+.mini-card{
+  background:var(--creme);border-radius:12px;padding:16px 14px;
+  border:1px dashed var(--linha);text-align:center;
+  transform:rotate(var(--r,0deg));
+}
+.mini-card:nth-child(1){--r:-2deg;}
+.mini-card:nth-child(2){--r:1.5deg;}
+.mini-card:nth-child(3){--r:1deg;}
+.mini-card:nth-child(4){--r:-1.5deg;}
+.mini-card .prato-icone{margin:0 auto 8px;}
+.mini-card p{font-size:12.5px;font-weight:600;margin:0;color:var(--tinta);}
+
+/* ---------- ICONE DE PRATO ---------- */
+.prato-icone{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.prato-icone svg{width:28px;height:28px;}
+.ic-principal{background:#F0D9D5;color:var(--tijolo-escuro);}
+.ic-marmita{background:#DCE5DA;color:var(--verde);}
+.ic-sobremesa{background:#FBEBD1;color:var(--mostarda-escura);}
+.ic-bebida{background:#D9E8E8;color:var(--teal);}
+
+/* ---------- FILTROS ---------- */
+.filtros-wrap{
+  background:var(--papel);border-bottom:1px solid var(--linha);
+  position:sticky;top:75px;z-index:50;
+}
+.filtros{
+  display:flex;gap:10px;padding:16px 28px;max-width:1180px;margin:0 auto;
+  overflow-x:auto;
+}
+.chip{
+  border:1.5px solid var(--linha);background:var(--creme);color:var(--tinta-suave);
+  padding:9px 18px;border-radius:999px;font-size:14px;font-weight:500;white-space:nowrap;
+  transition:all .15s;
+}
+.chip:hover{border-color:var(--verde);}
+.chip.ativo{background:var(--verde);border-color:var(--verde);color:var(--creme);}
+
+/* ---------- SEÇÃO PRODUTOS ---------- */
+.secao{padding:56px 0;}
+.secao-titulo{display:flex;align-items:baseline;gap:14px;margin-bottom:28px;}
+.secao-titulo h2{font-size:30px;color:var(--tinta);}
+.secao-titulo span{font-family:'Caveat',cursive;font-size:18px;color:var(--tijolo);font-weight:700;}
+
+.grid-produtos{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:24px;
+}
+
+/* ---------- CARD PRODUTO (etiqueta de marmita) ---------- */
+.card{
+  position:relative;background:var(--creme);border-radius:4px 4px 12px 12px;
+  border:1px solid var(--linha);padding:20px 18px 18px;
+  box-shadow:var(--sombra);
+  display:flex;flex-direction:column;gap:12px;
+}
+.card::before{
+  content:"";position:absolute;top:0;left:14px;right:14px;height:1px;
+  background-image:radial-gradient(circle, var(--papel) 2.5px, transparent 2.6px);
+  background-size:12px 12px;background-position:center top;
+  background-color:var(--linha);
+}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.fav-btn{
+  background:var(--papel);border:1px solid var(--linha);border-radius:50%;
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:transform .15s, background .15s;color:var(--tijolo);
+}
+.fav-btn svg{width:16px;height:16px;}
+.fav-btn:hover{transform:rotate(-8deg) scale(1.05);}
+.fav-btn.favoritado{background:var(--tijolo);color:var(--creme);border-color:var(--tijolo);}
+.card h3{font-size:18px;color:var(--tinta);}
+.card p.desc{font-size:13.5px;color:var(--tinta-suave);line-height:1.5;margin:0;min-height:40px;}
+.card-tag{
+  display:inline-flex;align-self:flex-start;background:var(--mostarda);color:var(--tinta);
+  font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;
+  text-transform:uppercase;letter-spacing:0.03em;
+}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:6px;border-top:1px dashed var(--linha);}
+.preco{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:var(--tijolo-escuro);}
+.preco small{font-family:'Work Sans',sans-serif;font-weight:500;font-size:12px;color:var(--tinta-suave);}
+.add-btn{
+  background:var(--verde);color:var(--creme);border:none;border-radius:10px;
+  padding:9px 16px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;
+  transition:background .15s;
+}
+.add-btn:hover{background:var(--verde-2);}
+.add-btn svg{width:15px;height:15px;}
+
+.stepper{
+  display:flex;align-items:center;gap:10px;background:var(--verde);border-radius:10px;padding:4px;
+}
+.stepper button{
+  width:26px;height:26px;border-radius:7px;border:none;background:var(--verde-2);color:var(--creme);
+  font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;
+}
+.stepper button:hover{background:#3A5A45;}
+.stepper span{color:var(--creme);font-weight:600;font-size:14px;min-width:16px;text-align:center;}
+
+.vazio{
+  text-align:center;padding:70px 20px;color:var(--tinta-suave);
+}
+.vazio .prato-icone{margin:0 auto 16px;width:70px;height:70px;}
+.vazio .prato-icone svg{width:34px;height:34px;}
+.vazio h3{font-size:20px;margin-bottom:6px;color:var(--tinta);}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--verde);color:#C9D2C2;padding:52px 0 26px;margin-top:20px;}
+.footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:40px;}
+footer h4{color:var(--creme);font-family:'Fraunces',serif;font-size:16px;margin-bottom:14px;}
+footer p{font-size:14px;line-height:1.6;margin:0 0 8px;color:#B9C4B1;}
+footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px;}
+footer a{font-size:14px;color:#B9C4B1;}
+footer a:hover{color:var(--mostarda);}
+.footer-baixo{
+  max-width:1180px;margin:40px auto 0;padding:20px 28px 0;border-top:1px solid rgba(251,246,234,0.12);
+  font-size:13px;color:#8FA084;
+}
+
+/* ---------- CARRINHO (drawer) ---------- */
+.overlay{
+  position:fixed;inset:0;background:rgba(43,33,24,0.45);z-index:90;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.overlay.aberto{opacity:1;pointer-events:auto;}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:420px;max-width:92vw;
+  background:var(--papel);z-index:100;box-shadow:-10px 0 30px rgba(0,0,0,0.2);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .3s ease;
+}
+.drawer.aberto{transform:translateX(0);}
+.drawer-head{
+  display:flex;align-items:center;justify-content:space-between;padding:22px 24px;
+  background:var(--verde);color:var(--creme);
+}
+.drawer-head h2{font-size:22px;color:var(--creme);}
+.fechar-btn{background:var(--verde-2);border:none;color:var(--creme);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.fechar-btn svg{width:16px;height:16px;}
+.drawer-body{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+.item-carrinho{
+  display:flex;gap:12px;background:var(--creme);border:1px solid var(--linha);border-radius:12px;padding:12px;
+}
+.item-carrinho .prato-icone{width:46px;height:46px;}
+.item-carrinho .prato-icone svg{width:22px;height:22px;}
+.item-info{flex:1;display:flex;flex-direction:column;gap:6px;}
+.item-info .nome-item{font-weight:600;font-size:14.5px;}
+.item-info .linha-baixo{display:flex;align-items:center;justify-content:space-between;}
+.remover-btn{background:none;border:none;color:var(--tijolo);font-size:12.5px;font-weight:600;text-decoration:underline;padding:0;}
+.item-stepper{display:flex;align-items:center;gap:8px;background:var(--papel-2);border-radius:8px;padding:2px;}
+.item-stepper button{width:24px;height:24px;border-radius:6px;border:none;background:var(--creme);border:1px solid var(--linha);color:var(--tinta);font-size:13px;}
+.item-stepper span{font-size:13px;font-weight:600;min-width:14px;text-align:center;}
+.item-preco{font-family:'Fraunces',serif;font-weight:700;color:var(--tijolo-escuro);font-size:15px;}
+
+.drawer-footer{padding:20px 24px 26px;border-top:1px solid var(--linha);background:var(--creme);}
+.linha-total{display:flex;justify-content:space-between;font-size:15px;margin-bottom:4px;color:var(--tinta-suave);}
+.linha-total.grande{font-size:19px;font-weight:700;color:var(--tinta);font-family:'Fraunces',serif;margin:12px 0 18px;}
+.btn-full{width:100%;justify-content:center;padding:15px;font-size:15.5px;}
+
+/* ---------- CHECKOUT ---------- */
+.checkout-overlay{
+  position:fixed;inset:0;background:var(--papel);z-index:120;
+  overflow-y:auto;transform:translateY(100%);transition:transform .35s ease;
+}
+.checkout-overlay.aberto{transform:translateY(0);}
+.checkout-head{
+  position:sticky;top:0;background:var(--verde);color:var(--creme);z-index:5;
+  display:flex;align-items:center;justify-content:space-between;padding:18px 28px;
+  border-bottom:3px solid var(--mostarda);
+}
+.checkout-head h2{font-size:20px;color:var(--creme);}
+.checkout-container{max-width:640px;margin:0 auto;padding:40px 24px 90px;}
+
+.progresso{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:40px;}
+.selo{
+  width:38px;height:38px;border-radius:50%;border:2px solid var(--linha);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;
+  color:var(--tinta-suave);background:var(--creme);flex-shrink:0;
+  font-family:'Fraunces',serif;transition:all .2s;
+}
+.selo.ativo{border-color:var(--tijolo);background:var(--tijolo);color:var(--creme);}
+.selo.feito{border-color:var(--verde);background:var(--verde);color:var(--creme);}
+.progresso .traco-selo{width:36px;height:2px;background:var(--linha);}
+.progresso .traco-selo.feito{background:var(--verde);}
+
+.passo{display:none;flex-direction:column;gap:20px;}
+.passo.ativo{display:flex;}
+.passo h3{font-size:24px;margin-bottom:2px;}
+.passo .sub{color:var(--tinta-suave);font-size:14.5px;margin:0 0 8px;}
+
+.campo{display:flex;flex-direction:column;gap:6px;}
+.campo label{font-size:13.5px;font-weight:600;color:var(--tinta-suave);}
+.campo input, .campo select{
+  border:1.5px solid var(--linha);background:var(--creme);border-radius:10px;
+  padding:12px 14px;font-size:15px;color:var(--tinta);font-family:inherit;
+}
+.campo input:focus, .campo select:focus{border-color:var(--verde);outline:none;}
+.linha-campos{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+.resumo-card{
+  background:var(--creme);border:1px solid var(--linha);border-radius:12px;padding:18px 20px;
+}
+.resumo-item{display:flex;justify-content:space-between;font-size:14.5px;padding:7px 0;color:var(--tinta-suave);}
+.resumo-item span:last-child{color:var(--tinta);font-weight:600;}
+.resumo-item.total{border-top:1px dashed var(--linha);margin-top:6px;padding-top:14px;font-size:17px;color:var(--tinta);font-family:'Fraunces',serif;font-weight:700;}
+.resumo-item.total span:last-child{color:var(--tijolo-escuro);}
+
+.opcoes-pagamento{display:flex;flex-direction:column;gap:12px;}
+.opcao-pag{
+  display:flex;align-items:center;gap:14px;border:2px solid var(--linha);border-radius:12px;
+  padding:15px 16px;background:var(--creme);transition:border-color .15s, background .15s;
+}
+.opcao-pag:hover{border-color:#C7B98C;}
+.opcao-pag.selecionada{border-color:var(--verde);background:#EEF3EA;}
+.opcao-pag input{width:18px;height:18px;accent-color:var(--verde);}
+.opcao-pag .ic{width:38px;height:38px;border-radius:50%;background:var(--papel-2);display:flex;align-items:center;justify-content:center;color:var(--tinta-suave);flex-shrink:0;}
+.opcao-pag.selecionada .ic{background:var(--verde);color:var(--creme);}
+.opcao-pag .ic svg{width:18px;height:18px;}
+.opcao-pag .txt{display:flex;flex-direction:column;}
+.opcao-pag .txt b{font-size:15px;color:var(--tinta);}
+.opcao-pag .txt small{font-size:12.5px;color:var(--tinta-suave);}
+
+.detalhe-pagamento{
+  border:1px dashed var(--linha);border-radius:12px;padding:18px 20px;background:#FBF8F0;
+  display:none;flex-direction:column;gap:14px;
+}
+.detalhe-pagamento.mostrar{display:flex;}
+.pix-box{
+  display:flex;align-items:center;gap:14px;background:var(--creme);border:1px solid var(--linha);border-radius:10px;padding:14px;
+}
+.qr-fake{
+  width:64px;height:64px;border-radius:8px;flex-shrink:0;
+  background-image:
+    linear-gradient(90deg, var(--tinta) 0 6px, transparent 6px 12px),
+    linear-gradient(0deg, var(--tinta) 0 6px, transparent 6px 12px);
+  background-size:12px 12px;background-color:var(--creme);border:2px solid var(--tinta);
+}
+.pix-codigo{flex:1;font-size:12.5px;color:var(--tinta-suave);word-break:break-all;font-family:monospace;}
+.copiar-btn{background:var(--verde);color:var(--creme);border:none;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:600;white-space:nowrap;}
+.aviso{font-size:12.5px;color:var(--tinta-suave);background:var(--papel-2);border-radius:8px;padding:10px 12px;}
+
+.acoes-passo{display:flex;gap:12px;margin-top:8px;}
+.acoes-passo .btn{flex:1;justify-content:center;}
+
+/* confirmação */
+.confirmacao{text-align:center;padding:20px 0;}
+.selo-final{
+  width:110px;height:110px;border-radius:50%;border:4px solid var(--verde);color:var(--verde);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 24px;
+  transform:rotate(-6deg);animation:carimbar .45s ease;
+}
+@keyframes carimbar{from{transform:rotate(-6deg) scale(2.4);opacity:0;}to{transform:rotate(-6deg) scale(1);opacity:1;}}
+.selo-final svg{width:52px;height:52px;}
+.confirmacao h3{font-size:28px;margin-bottom:8px;}
+.confirmacao .sub{color:var(--tinta-suave);margin-bottom:26px;}
+.numero-pedido{
+  display:inline-block;background:var(--mostarda);color:var(--tinta);font-family:'Fraunces',serif;
+  font-weight:700;padding:8px 20px;border-radius:999px;margin-bottom:26px;font-size:15px;
+}
+
+/* ---------- FAVORITOS VAZIO / TOASTS ---------- */
+.toast{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--verde);color:var(--creme);padding:13px 22px;border-radius:999px;
+  font-size:14px;font-weight:500;box-shadow:var(--sombra);z-index:200;
+  opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
+  display:flex;align-items:center;gap:8px;
+}
+.toast.mostrar{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast svg{width:16px;height:16px;color:var(--mostarda);flex-shrink:0;}
+
+/* ---------- BOTÃO CARRINHO FLUTUANTE (mobile) ---------- */
+.carrinho-flutuante{
+  display:none;position:fixed;bottom:20px;left:20px;right:20px;z-index:70;
+  background:var(--tijolo);color:var(--creme);border:none;border-radius:14px;
+  padding:16px 20px;justify-content:space-between;align-items:center;
+  box-shadow:var(--sombra);font-weight:600;font-size:15px;
+}
+
+/* ---------- RESPONSIVO ---------- */
+@media (max-width:920px){
+  .hero{grid-template-columns:1fr;}
+  .hero-esquerda{padding:56px 28px 40px;}
+  .hero-esquerda h1{font-size:38px;}
+  .hero-direita{border-left:none;border-top:3px solid var(--mostarda);padding:40px 28px 56px;}
+  .footer-grid{grid-template-columns:1fr;gap:30px;}
+  nav.categorias{display:none;}
+  .filtros-wrap{top:73px;}
+}
+@media (max-width:640px){
+  .header-inner{padding:14px 18px;}
+  .container{padding:0 18px;}
+  .logo-text .nome{font-size:18px;}
+  .drawer{width:100%;}
+  .carrinho-flutuante{display:flex;}
+  .linha-campos{grid-template-columns:1fr;}
+  .carimbo{width:86px;height:86px;font-size:11px;top:18px;right:18px;}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="brasa"></div>
+      <div class="logo-text">
+        <span class="nome">Fogão Aceso</span>
+        <span class="slogan">comida de casa, na sua mesa</span>
+      </div>
+    </div>
+    <nav class="categorias" id="navCategorias">
+      <button data-cat="todos" class="ativo">Cardápio</button>
+      <button data-cat="principais">Pratos principais</button>
+      <button data-cat="marmitas">Marmitas</button>
+      <button data-cat="sobremesas">Sobremesas</button>
+      <button data-cat="bebidas">Bebidas</button>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="btnFavoritos" aria-label="Ver favoritos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8 2 4.5 5.6 4c2-.3 3.8.7 4.9 2.3C11.6 4.7 13.4 3.7 15.4 4c3.6.5 5.2 4 3.6 7.7C16.5 16.4 12 21 12 21z"/></svg>
+        <span class="badge oculta" id="badgeFav">0</span>
+      </button>
+      <button class="icon-btn" id="btnCarrinho" aria-label="Abrir carrinho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L4.5 2H2"/><circle cx="9.5" cy="20" r="1.4" fill="currentColor" stroke="none"/><circle cx="17.5" cy="20" r="1.4" fill="currentColor" stroke="none"/></svg>
+        <span class="badge oculta" id="badgeCart">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-esquerda">
+    <div class="eyebrow"><span class="traco"></span> feito hoje, na panela de casa</div>
+    <h1>Comida caseira <em>de verdade</em>, direto para a sua mesa.</h1>
+    <p>Pratos preparados como a sua avó fazia: fogo baixo, tempero na medida e ingredientes frescos. Escolha, monte sua sacola e receba quentinho.</p>
+    <div class="hero-ctas">
+      <a href="#cardapio" class="btn btn-mostarda">Ver cardápio de hoje</a>
+      <button class="btn btn-outline" id="btnComoFunciona">Como funciona</button>
+    </div>
+  </div>
+  <div class="hero-direita">
+    <div class="carimbo">entrega<br>hoje</div>
+    <div class="pratos-hoje" id="pratosHoje"></div>
+  </div>
+</section>
+
+<div class="filtros-wrap">
+  <div class="filtros" id="filtrosChips">
+    <button class="chip ativo" data-cat="todos">Tudo</button>
+    <button class="chip" data-cat="principais">Pratos principais</button>
+    <button class="chip" data-cat="marmitas">Marmitas</button>
+    <button class="chip" data-cat="sobremesas">Sobremesas</button>
+    <button class="chip" data-cat="bebidas">Bebidas</button>
+  </div>
+</div>
+
+<main class="container" id="cardapio">
+  <section class="secao">
+    <div class="secao-titulo">
+      <h2 id="tituloSecao">Cardápio de hoje</h2>
+      <span id="contagemProdutos"></span>
+    </div>
+    <div class="grid-produtos" id="gridProdutos"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-grid">
+    <div>
+      <h4>Fogão Aceso</h4>
+      <p>Uma cozinha de bairro que virou marmitaria: receitas de família, feitas em pequenas quantidades, todos os dias.</p>
+    </div>
+    <div>
+      <h4>Atendimento</h4>
+      <ul>
+        <li><a href="#">Como funciona a entrega</a></li>
+        <li><a href="#">Trocas e cancelamentos</a></li>
+        <li><a href="#">Fale com a gente</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Horário da cozinha</h4>
+      <ul>
+        <li>Terça a domingo</li>
+        <li>11h às 21h</li>
+        <li>Segunda: fechado (dia de descanso)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baixo container">© 2026 Fogão Aceso — site de demonstração, sem processamento real de pagamentos.</div>
+</footer>
+
+<button class="carrinho-flutuante" id="carrinhoFlutuante">
+  <span id="ffQtd">0 itens</span>
+  <span id="ffTotal">R$ 0,00</span>
+</button>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="drawer" id="drawerCarrinho" aria-label="Carrinho de compras">
+  <div class="drawer-head">
+    <h2>Sua sacola</h2>
+    <button class="fechar-btn" id="fecharDrawer" aria-label="Fechar carrinho">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-footer">
+    <div class="linha-total"><span>Subtotal</span><span id="dSubtotal">R$ 0,00</span></div>
+    <div class="linha-total"><span>Taxa de entrega</span><span id="dEntrega">R$ 6,90</span></div>
+    <div class="linha-total grande"><span>Total</span><span id="dTotal">R$ 0,00</span></div>
+    <button class="btn btn-tijolo btn-full" id="btnFinalizar">Finalizar pedido</button>
+  </div>
+</aside>
+
+<div class="checkout-overlay" id="checkoutOverlay">
+  <div class="checkout-head">
+    <h2>Finalizar pedido</h2>
+    <button class="fechar-btn" id="fecharCheckout" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="checkout-container">
+
+    <div class="progresso" id="progresso">
+      <div class="selo ativo" data-passo="1">1</div>
+      <div class="traco-selo"></div>
+      <div class="selo" data-passo="2">2</div>
+      <div class="traco-selo"></div>
+      <div class="selo" data-passo="3">3</div>
+      <div class="traco-selo"></div>
+      <div class="selo" data-passo="4">4</div>
+    </div>
+
+    <div class="passo ativo" data-passo="1">
+      <h3>Revise seu pedido</h3>
+      <p class="sub">Confira os itens da sua sacola antes de continuar.</p>
+      <div class="resumo-card" id="revisaoItens"></div>
+      <div class="resumo-card">
+        <div class="resumo-item"><span>Subtotal</span><span id="r1Subtotal">R$ 0,00</span></div>
+        <div class="resumo-item"><span>Taxa de entrega</span><span id="r1Entrega">R$ 6,90</span></div>
+        <div class="resumo-item total"><span>Total</span><span id="r1Total">R$ 0,00</span></div>
+      </div>
+      <div class="acoes-passo">
+        <button class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);" id="voltarCompras">Voltar às compras</button>
+        <button class="btn btn-tijolo" id="irPasso2">Continuar</button>
+      </div>
+    </div>
+
+    <div class="passo" data-passo="2">
+      <h3>Endereço de entrega</h3>
+      <p class="sub">Para onde vamos levar sua comida quentinha?</p>
+      <div class="campo"><label for="cNome">Nome completo</label><input id="cNome" type="text" placeholder="Como podemos te chamar"></div>
+      <div class="linha-campos">
+        <div class="campo"><label for="cTelefone">Telefone</label><input id="cTelefone" type="tel" placeholder="(11) 90000-0000"></div>
+        <div class="campo"><label for="cCep">CEP</label><input id="cCep" type="text" placeholder="00000-000"></div>
+      </div>
+      <div class="campo"><label for="cEndereco">Endereço</label><input id="cEndereco" type="text" placeholder="Rua, número"></div>
+      <div class="linha-campos">
+        <div class="campo"><label for="cBairro">Bairro</label><input id="cBairro" type="text" placeholder="Seu bairro"></div>
+        <div class="campo"><label for="cComplemento">Complemento</label><input id="cComplemento" type="text" placeholder="Apto, bloco (opcional)"></div>
+      </div>
+      <div class="acoes-passo">
+        <button class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);" id="voltarPasso1">Voltar</button>
+        <button class="btn btn-tijolo" id="irPasso3">Continuar</button>
+      </div>
+    </div>
+
+    <div class="passo" data-passo="3">
+      <h3>Forma de pagamento</h3>
+      <p class="sub">Escolha como prefere pagar pelo seu pedido.</p>
+      <div class="opcoes-pagamento" id="opcoesPagamento">
+        <label class="opcao-pag" data-metodo="pix">
+          <input type="radio" name="pagamento" value="pix">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l4 4-4 4-4-4z"/><path d="M12 13l4 4-4 4-4-4z"/><path d="M3 12l4-4 4 4-4 4z"/><path d="M21 12l-4-4-4 4 4 4z"/></svg></div>
+          <div class="txt"><b>Pix</b><small>Confirmação imediata</small></div>
+        </label>
+        <label class="opcao-pag" data-metodo="cartao">
+          <input type="radio" name="pagamento" value="cartao">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+          <div class="txt"><b>Cartão de crédito</b><small>Visa, Mastercard e mais</small></div>
+        </label>
+        <label class="opcao-pag" data-metodo="dinheiro">
+          <input type="radio" name="pagamento" value="dinheiro">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <div class="txt"><b>Dinheiro</b><small>Pague na entrega</small></div>
+        </label>
+      </div>
+
+      <div class="detalhe-pagamento" id="detalhePix">
+        <div class="pix-box">
+          <div class="qr-fake"></div>
+          <div class="pix-codigo" id="pixCodigo">00020126580014BR.GOV.BCB.PIX-FOGAO-ACESO-DEMO</div>
+        </div>
+        <button class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);align-self:flex-start;" id="copiarPix">Copiar código pix</button>
+        <div class="aviso">Pagamento simulado para fins de demonstração deste site.</div>
+      </div>
+
+      <div class="detalhe-pagamento" id="detalheCartao">
+        <div class="campo"><label for="ccNumero">Número do cartão</label><input id="ccNumero" type="text" placeholder="0000 0000 0000 0000" maxlength="19"></div>
+        <div class="campo"><label for="ccNome">Nome impresso no cartão</label><input id="ccNome" type="text" placeholder="Nome como está no cartão"></div>
+        <div class="linha-campos">
+          <div class="campo"><label for="ccValidade">Validade</label><input id="ccValidade" type="text" placeholder="MM/AA" maxlength="5"></div>
+          <div class="campo"><label for="ccCvv">CVV</label><input id="ccCvv" type="text" placeholder="000" maxlength="4"></div>
+        </div>
+        <div class="aviso">Pagamento simulado — nenhum dado de cartão é processado de verdade.</div>
+      </div>
+
+      <div class="detalhe-pagamento" id="detalheDinheiro">
+        <div class="campo"><label for="dTroco">Troco para quanto?</label><input id="dTroco" type="text" placeholder="Ex: R$ 50,00 (opcional)"></div>
+        <div class="aviso">O entregador leva a máquina caso prefira débito ou crédito na entrega.</div>
+      </div>
+
+      <div class="acoes-passo">
+        <button class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);" id="voltarPasso2">Voltar</button>
+        <button class="btn btn-tijolo" id="irPasso4">Confirmar pedido</button>
+      </div>
+    </div>
+
+    <div class="passo" data-passo="4">
+      <div class="confirmacao">
+        <div class="selo-final">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h3>Pedido carimbado!</h3>
+        <p class="sub">Seu pedido foi recebido e já vai para o fogão.</p>
+        <div class="numero-pedido" id="numeroPedido">#000000</div>
+        <div class="resumo-card" style="text-align:left;">
+          <div class="resumo-item"><span>Entrega para</span><span id="confEndereco">—</span></div>
+          <div class="resumo-item"><span>Pagamento</span><span id="confPagamento">—</span></div>
+          <div class="resumo-item"><span>Previsão</span><span>50 a 70 minutos</span></div>
+          <div class="resumo-item total"><span>Total pago</span><span id="confTotal">R$ 0,00</span></div>
+        </div>
+        <button class="btn btn-mostarda btn-full" id="btnNovoPedido" style="margin-top:24px;">Fazer novo pedido</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- DADOS ---------- */
+const produtos = [
+  {id:1, nome:"Feijoada completa", desc:"Feijão preto, carnes selecionadas, arroz, couve e farofa.", preco:34.90, cat:"principais", icone:"principal", tag:"Mais pedido"},
+  {id:2, nome:"Strogonoff de frango", desc:"Frango cremoso com arroz branco e batata palha.", preco:28.50, cat:"principais", icone:"principal"},
+  {id:3, nome:"Moqueca de peixe", desc:"Peixe fresco no leite de coco, com dendê e pimentão.", preco:39.90, cat:"principais", icone:"principal"},
+  {id:4, nome:"Frango caipira ao molho pardo", desc:"Receita de família, servido com arroz e angu.", preco:32.00, cat:"principais", icone:"principal"},
+  {id:5, nome:"Bife acebolado, arroz e feijão", desc:"O clássico prato caseiro de todo dia.", preco:26.90, cat:"principais", icone:"principal"},
+  {id:6, nome:"Marmita fit frango grelhado", desc:"Frango grelhado, batata doce e legumes no vapor.", preco:22.90, cat:"marmitas", icone:"marmita", tag:"Fitness"},
+  {id:7, nome:"Marmita executiva do dia", desc:"Prato do dia, variando conforme o cardápio da semana.", preco:24.90, cat:"marmitas", icone:"marmita"},
+  {id:8, nome:"Marmita vegetariana", desc:"Grão de bico, legumes assados e quinoa.", preco:23.50, cat:"marmitas", icone:"marmita", tag:"Vegetariana"},
+  {id:9, nome:"Brigadeiro gourmet (6 un)", desc:"Feito na hora, com chocolate belga.", preco:18.00, cat:"sobremesas", icone:"sobremesa"},
+  {id:10, nome:"Pudim de leite condensado", desc:"Receita da vó, na medida certa de doce.", preco:14.90, cat:"sobremesas", icone:"sobremesa", tag:"Mais pedido"},
+  {id:11, nome:"Bolo de cenoura com cobertura", desc:"Fatia generosa com cobertura de chocolate.", preco:9.90, cat:"sobremesas", icone:"sobremesa"},
+  {id:12, nome:"Pé-de-moleque caseiro", desc:"Amendoim torrado com rapadura.", preco:8.50, cat:"sobremesas", icone:"sobremesa"},
+  {id:13, nome:"Suco de laranja natural", desc:"Espremido na hora, 500ml.", preco:9.00, cat:"bebidas", icone:"bebida"},
+  {id:14, nome:"Água de coco gelada", desc:"Direto do coco, bem gelada, 300ml.", preco:7.50, cat:"bebidas", icone:"bebida"},
+  {id:15, nome:"Suco de acerola", desc:"Fonte de vitamina C, sem açúcar adicionado, 500ml.", preco:9.00, cat:"bebidas", icone:"bebida"},
+];
+
+const nomesCategoria = {todos:"Cardápio de hoje", principais:"Pratos principais", marmitas:"Marmitas", sobremesas:"Sobremesas", bebidas:"Bebidas"};
+const TAXA_ENTREGA = 6.90;
+
+/* ---------- ESTADO ---------- */
+let carrinho = {};
+let favoritos = new Set();
+let categoriaAtual = "todos";
+let vendoFavoritos = false;
+let metodoPagamento = null;
+let pedidoContador = 480213;
+
+const fmt = v => "R$ " + v.toFixed(2).replace(".", ",");
+
+/* ---------- ÍCONES SVG POR CATEGORIA ---------- */
+function svgPrato(icone){
+  const paths = {
+    principal: '<path d="M4 12a8 8 0 0016 0"/><path d="M2 12h20"/><path d="M12 4v3"/>',
+    marmita: '<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M4 8l2-4h12l2 4"/><path d="M12 8v12"/>',
+    sobremesa: '<path d="M4 20h16"/><path d="M6 20c0-6 2-9 6-9s6 3 6 9"/><circle cx="12" cy="7" r="2"/>',
+    bebida: '<path d="M7 3h10l-1 14a2 2 0 01-2 2H10a2 2 0 01-2-2z"/><path d="M6 8h12"/>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+paths[icone]+'</svg>';
+}
+
+function iconeCoracao(preenchido){
+  return '<svg viewBox="0 0 24 24" fill="'+(preenchido?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8 2 4.5 5.6 4c2-.3 3.8.7 4.9 2.3C11.6 4.7 13.4 3.7 15.4 4c3.6.5 5.2 4 3.6 7.7C16.5 16.4 12 21 12 21z"/></svg>';
+}
+
+/* ---------- HERO: pratos do dia ---------- */
+function renderPratosHoje(){
+  const destaques = [produtos[0], produtos[9], produtos[5], produtos[12]];
+  document.getElementById("pratosHoje").innerHTML = destaques.map(p => `
+    <div class="mini-card">
+      <div class="prato-icone ic-${p.icone}" style="width:44px;height:44px;">${svgPrato(p.icone).replace('width="28" height="28"','width="20" height="20"')}</div>
+      <p>${p.nome}</p>
+    </div>
+  `).join("");
+}
+
+/* ---------- RENDER PRODUTOS ---------- */
+function renderProdutos(){
+  const grid = document.getElementById("gridProdutos");
+  let lista = produtos;
+  if(vendoFavoritos){
+    lista = produtos.filter(p => favoritos.has(p.id));
+    document.getElementById("tituloSecao").textContent = "Seus favoritos";
+  } else {
+    lista = categoriaAtual === "todos" ? produtos : produtos.filter(p => p.cat === categoriaAtual);
+    document.getElementById("tituloSecao").textContent = nomesCategoria[categoriaAtual];
+  }
+
+  document.getElementById("contagemProdutos").textContent = lista.length ? `${lista.length} ${lista.length === 1 ? 'opção' : 'opções'}` : "";
+
+  if(lista.length === 0){
+    grid.innerHTML = `
+      <div class="vazio" style="grid-column:1/-1;">
+        <div class="prato-icone ic-marmita" style="margin:0 auto;">${svgPrato('marmita')}</div>
+        <h3>${vendoFavoritos ? 'Você ainda não tem favoritos' : 'Nada por aqui'}</h3>
+        <p>${vendoFavoritos ? 'Toque no coração de um prato para guardá-lo aqui.' : 'Tente outra categoria do cardápio.'}</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = lista.map(p => {
+    const qtd = carrinho[p.id]?.qtd || 0;
+    const fav = favoritos.has(p.id);
+    return `
+    <div class="card">
+      <div class="card-top">
+        <div class="prato-icone ic-${p.icone}">${svgPrato(p.icone)}</div>
+        <button class="fav-btn ${fav?'favoritado':''}" onclick="alternarFavorito(${p.id})" aria-label="Favoritar ${p.nome}">${iconeCoracao(fav)}</button>
+      </div>
+      ${p.tag ? `<span class="card-tag">${p.tag}</span>` : ''}
+      <h3>${p.nome}</h3>
+      <p class="desc">${p.desc}</p>
+      <div class="card-footer">
+        <span class="preco">${fmt(p.preco)}</span>
+        ${qtd === 0
+          ? `<button class="add-btn" onclick="adicionarCarrinho(${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Adicionar</button>`
+          : `<div class="stepper">
+               <button onclick="alterarQtd(${p.id},-1)" aria-label="Diminuir">−</button>
+               <span>${qtd}</span>
+               <button onclick="alterarQtd(${p.id},1)" aria-label="Aumentar">+</button>
+             </div>`
+        }
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ---------- FAVORITOS ---------- */
+function alternarFavorito(id){
+  if(favoritos.has(id)){
+    favoritos.delete(id);
+  } else {
+    favoritos.add(id);
+    mostrarToast("Adicionado aos favoritos", "coracao");
+  }
+  atualizarBadges();
+  renderProdutos();
+}
+
+/* ---------- CARRINHO ---------- */
+function adicionarCarrinho(id){
+  const p = produtos.find(x => x.id === id);
+  if(!carrinho[id]) carrinho[id] = {qtd:0};
+  carrinho[id].qtd++;
+  mostrarToast(p.nome + " adicionado à sacola", "sacola");
+  atualizarBadges();
+  renderProdutos();
+  renderDrawer();
+}
+function alterarQtd(id, delta){
+  if(!carrinho[id]) return;
+  carrinho[id].qtd += delta;
+  if(carrinho[id].qtd <= 0) delete carrinho[id];
+  atualizarBadges();
+  renderProdutos();
+  renderDrawer();
+}
+function removerItem(id){
+  delete carrinho[id];
+  atualizarBadges();
+  renderProdutos();
+  renderDrawer();
+}
+
+function totalCarrinho(){
+  return Object.entries(carrinho).reduce((soma,[id,item]) => {
+    const p = produtos.find(x => x.id == id);
+    return soma + p.preco * item.qtd;
+  }, 0);
+}
+function qtdCarrinho(){
+  return Object.values(carrinho).reduce((s,i) => s + i.qtd, 0);
+}
+
+function atualizarBadges(){
+  const qtdC = qtdCarrinho();
+  const qtdF = favoritos.size;
+  const bC = document.getElementById("badgeCart");
+  const bF = document.getElementById("badgeFav");
+  bC.textContent = qtdC; bC.classList.toggle("oculta", qtdC === 0);
+  bF.textContent = qtdF; bF.classList.toggle("oculta", qtdF === 0);
+
+  const subtotal = totalCarrinho();
+  const total = qtdC > 0 ? subtotal + TAXA_ENTREGA : 0;
+  document.getElementById("ffQtd").textContent = qtdC + (qtdC === 1 ? " item" : " itens");
+  document.getElementById("ffTotal").textContent = fmt(total);
+  document.getElementById("carrinhoFlutuante").style.display = qtdC > 0 ? "flex" : "none";
+}
+
+function renderDrawer(){
+  const body = document.getElementById("drawerBody");
+  const entradas = Object.entries(carrinho);
+  if(entradas.length === 0){
+    body.innerHTML = `<div class="vazio"><div class="prato-icone ic-principal" style="margin:0 auto;">${svgPrato('principal')}</div><h3>Sua sacola está vazia</h3><p>Adicione pratos do cardápio para começar.</p></div>`;
+  } else {
+    body.innerHTML = entradas.map(([id,item]) => {
+      const p = produtos.find(x => x.id == id);
+      return `
+      <div class="item-carrinho">
+        <div class="prato-icone ic-${p.icone}">${svgPrato(p.icone)}</div>
+        <div class="item-info">
+          <span class="nome-item">${p.nome}</span>
+          <div class="linha-baixo">
+            <div class="item-stepper">
+              <button onclick="alterarQtd(${p.id},-1)" aria-label="Diminuir">−</button>
+              <span>${item.qtd}</span>
+              <button onclick="alterarQtd(${p.id},1)" aria-label="Aumentar">+</button>
+            </div>
+            <span class="item-preco">${fmt(p.preco * item.qtd)}</span>
+          </div>
+          <button class="remover-btn" onclick="removerItem(${p.id})">Remover</button>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  const subtotal = totalCarrinho();
+  const entrega = subtotal > 0 ? TAXA_ENTREGA : 0;
+  document.getElementById("dSubtotal").textContent = fmt(subtotal);
+  document.getElementById("dEntrega").textContent = fmt(entrega);
+  document.getElementById("dTotal").textContent = fmt(subtotal + entrega);
+  document.getElementById("btnFinalizar").disabled = entradas.length === 0;
+  document.getElementById("btnFinalizar").style.opacity = entradas.length === 0 ? 0.5 : 1;
+}
+
+/* ---------- DRAWER OPEN/CLOSE ---------- */
+const overlay = document.getElementById("overlay");
+const drawer = document.getElementById("drawerCarrinho");
+function abrirDrawer(){
+  renderDrawer();
+  overlay.classList.add("aberto");
+  drawer.classList.add("aberto");
+}
+function fecharDrawerFn(){
+  overlay.classList.remove("aberto");
+  drawer.classList.remove("aberto");
+}
+document.getElementById("btnCarrinho").onclick = abrirDrawer;
+document.getElementById("carrinhoFlutuante").onclick = abrirDrawer;
+document.getElementById("fecharDrawer").onclick = fecharDrawerFn;
+overlay.onclick = () => { fecharDrawerFn(); fecharCheckoutFn(); };
+
+/* ---------- FAVORITOS: navegação ---------- */
+document.getElementById("btnFavoritos").onclick = () => {
+  vendoFavoritos = true;
+  document.querySelectorAll(".chip, nav.categorias button").forEach(b => b.classList.remove("ativo"));
+  renderProdutos();
+  document.getElementById("cardapio").scrollIntoView({behavior:"smooth"});
+};
+
+/* ---------- FILTROS DE CATEGORIA ---------- */
+function definirCategoria(cat){
+  categoriaAtual = cat;
+  vendoFavoritos = false;
+  document.querySelectorAll(".chip").forEach(b => b.classList.toggle("ativo", b.dataset.cat === cat));
+  document.querySelectorAll("nav.categorias button").forEach(b => b.classList.toggle("ativo", b.dataset.cat === cat));
+  renderProdutos();
+}
+document.querySelectorAll(".chip").forEach(b => b.onclick = () => { definirCategoria(b.dataset.cat); document.getElementById("cardapio").scrollIntoView({behavior:"smooth"}); });
+document.querySelectorAll("nav.categorias button").forEach(b => b.onclick = () => { definirCategoria(b.dataset.cat); document.getElementById("cardapio").scrollIntoView({behavior:"smooth"}); });
+
+document.getElementById("btnComoFunciona").onclick = () => {
+  mostrarToast("Escolha os pratos, monte a sacola e finalize com Pix, cartão ou dinheiro", "sacola");
+};
+
+/* ---------- TOAST ---------- */
+let toastTimeout;
+function mostrarToast(msg, icone){
+  const toast = document.getElementById("toast");
+  const svg = icone === "coracao" ? iconeCoracao(true) : svgPrato('marmita');
+  toast.innerHTML = svg + "<span>"+msg+"</span>";
+  toast.classList.add("mostrar");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove("mostrar"), 2400);
+}
+
+/* ---------- CHECKOUT ---------- */
+const checkoutOverlay = document.getElementById("checkoutOverlay");
+function abrirCheckout(){
+  if(qtdCarrinho() === 0) return;
+  fecharDrawerFn();
+  irParaPasso(1);
+  renderRevisao();
+  checkoutOverlay.classList.add("aberto");
+  document.body.style.overflow = "hidden";
+}
+function fecharCheckoutFn(){
+  checkoutOverlay.classList.remove("aberto");
+  document.body.style.overflow = "";
+}
+document.getElementById("btnFinalizar").onclick = abrirCheckout;
+document.getElementById("fecharCheckout").onclick = fecharCheckoutFn;
+document.getElementById("voltarCompras").onclick = fecharCheckoutFn;
+
+function irParaPasso(n){
+  document.querySelectorAll(".passo").forEach(p => p.classList.toggle("ativo", p.dataset.passo == n));
+  document.querySelectorAll(".selo").forEach(s => {
+    const num = parseInt(s.dataset.passo);
+    s.classList.toggle("ativo", num === n);
+    s.classList.toggle("feito", num < n);
+  });
+  document.querySelectorAll(".traco-selo").forEach((t,i) => t.classList.toggle("feito", i < n-1));
+  document.querySelector(".checkout-container").scrollTo?.({top:0});
+  window.scrollTo(0,0);
+}
+
+function renderRevisao(){
+  const box = document.getElementById("revisaoItens");
+  box.innerHTML = Object.entries(carrinho).map(([id,item]) => {
+    const p = produtos.find(x => x.id == id);
+    return `<div class="resumo-item"><span>${item.qtd}x ${p.nome}</span><span>${fmt(p.preco*item.qtd)}</span></div>`;
+  }).join("");
+  const subtotal = totalCarrinho();
+  document.getElementById("r1Subtotal").textContent = fmt(subtotal);
+  document.getElementById("r1Entrega").textContent = fmt(TAXA_ENTREGA);
+  document.getElementById("r1Total").textContent = fmt(subtotal + TAXA_ENTREGA);
+}
+
+document.getElementById("irPasso2").onclick = () => irParaPasso(2);
+document.getElementById("voltarPasso1").onclick = () => irParaPasso(1);
+document.getElementById("irPasso3").onclick = () => {
+  if(!document.getElementById("cNome").value || !document.getElementById("cEndereco").value){
+    mostrarToast("Preencha nome e endereço para continuar", "sacola");
+    return;
+  }
+  irParaPasso(3);
+};
+document.getElementById("voltarPasso2").onclick = () => irParaPasso(2);
+
+/* ---------- PAGAMENTO ---------- */
+document.querySelectorAll(".opcao-pag").forEach(op => {
+  op.onclick = () => {
+    document.querySelectorAll(".opcao-pag").forEach(o => o.classList.remove("selecionada"));
+    op.classList.add("selecionada");
+    op.querySelector("input").checked = true;
+    metodoPagamento = op.dataset.metodo;
+    document.querySelectorAll(".detalhe-pagamento").forEach(d => d.classList.remove("mostrar"));
+    const mapa = {pix:"detalhePix", cartao:"detalheCartao", dinheiro:"detalheDinheiro"};
+    document.getElementById(mapa[metodoPagamento]).classList.add("mostrar");
+  };
+});
+document.getElementById("copiarPix").onclick = () => mostrarToast("Código pix copiado", "sacola");
+
+document.getElementById("irPasso4").onclick = () => {
+  if(!metodoPagamento){
+    mostrarToast("Escolha uma forma de pagamento", "sacola");
+    return;
+  }
+  finalizarPedido();
+  irParaPasso(4);
+};
+
+function finalizarPedido(){
+  pedidoContador++;
+  document.getElementById("numeroPedido").textContent = "#" + pedidoContador;
+  const endereco = document.getElementById("cEndereco").value + ", " + (document.getElementById("cBairro").value || "");
+  document.getElementById("confEndereco").textContent = endereco;
+  const nomesPag = {pix:"Pix", cartao:"Cartão de crédito", dinheiro:"Dinheiro"};
+  document.getElementById("confPagamento").textContent = nomesPag[metodoPagamento];
+  const subtotal = totalCarrinho();
+  document.getElementById("confTotal").textContent = fmt(subtotal + TAXA_ENTREGA);
+}
+
+document.getElementById("btnNovoPedido").onclick = () => {
+  carrinho = {};
+  metodoPagamento = null;
+  document.querySelectorAll(".opcao-pag").forEach(o => o.classList.remove("selecionada"));
+  document.querySelectorAll(".detalhe-pagamento").forEach(d => d.classList.remove("mostrar"));
+  document.querySelectorAll("#cNome,#cTelefone,#cCep,#cEndereco,#cBairro,#cComplemento").forEach(i => i.value = "");
+  atualizarBadges();
+  renderProdutos();
+  fecharCheckoutFn();
+};
+
+/* ---------- INIT ---------- */
+renderPratosHoje();
+renderProdutos();
+atualizarBadges();
+</script>
+</body>
+</html>
