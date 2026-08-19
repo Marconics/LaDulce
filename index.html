@@ -21,11 +21,10 @@
       </div>
     </div>
     <nav class="categorias" id="navCategorias">
-      <button data-cat="todos" class="ativo">Cardápio</button>
-      <button data-cat="principais">Pratos principais</button>
-      <button data-cat="marmitas">Marmitas</button>
-      <button data-cat="sobremesas">Sobremesas</button>
-      <button data-cat="bebidas">Bebidas</button>
+      <button data-cat="todos" class="ativo">Bolos</button>
+      <button data-cat="principais">BomBons</button>
+      <button data-cat="marmitas">Salgadinhos</button>
+      <button data-cat="sobremesas">Refrigerantes</button>
     </nav>
     <div class="header-actions">
       <button class="icon-btn" id="btnFavoritos" aria-label="Ver favoritos">
@@ -42,16 +41,15 @@
 
 <section class="hero">
   <div class="hero-esquerda">
-    <div class="eyebrow"><span class="traco"></span> feito hoje, na panela de casa</div>
-    <h1>Comida caseira <em>de verdade</em>, direto para a sua mesa.</h1>
-    <p>Pratos preparados como a sua avó fazia: fogo baixo, tempero na medida e ingredientes frescos. Escolha, monte sua sacola e receba quentinho.</p>
+    <div class="eyebrow"><span class="traco"></span> Ideal para você!</div>
+    <h1>Artigos de qualidade para a sua festa</h1>
+    <p>Bolos, Brigadeiros, Refrigerante, Salgados, BomBons</p>
     <div class="hero-ctas">
-      <a href="#cardapio" class="btn btn-mostarda">Ver cardápio de hoje</a>
+      <a href="#cardapio" class="btn btn-mostarda">Vizualizar Produtos</a>
       <button class="btn btn-outline" id="btnComoFunciona">Como funciona</button>
     </div>
   </div>
   <div class="hero-direita">
-    <div class="carimbo">entrega<br>hoje</div>
     <div class="pratos-hoje" id="pratosHoje"></div>
   </div>
 </section>
@@ -59,10 +57,10 @@
 <div class="filtros-wrap">
   <div class="filtros" id="filtrosChips">
     <button class="chip ativo" data-cat="todos">Tudo</button>
-    <button class="chip" data-cat="principais">Pratos principais</button>
-    <button class="chip" data-cat="marmitas">Marmitas</button>
-    <button class="chip" data-cat="sobremesas">Sobremesas</button>
-    <button class="chip" data-cat="bebidas">Bebidas</button>
+    <button class="chip" data-cat="principais">Bolos</button>
+    <button class="chip" data-cat="marmitas">BomBons</button>
+    <button class="chip" data-cat="sobremesas">Salgadinhos</button>
+    <button class="chip" data-cat="bebidas">Refrigerantes</button>
   </div>
 </div>
 
@@ -79,8 +77,8 @@
 <footer>
   <div class="container footer-grid">
     <div>
-      <h4>Fogão Aceso</h4>
-      <p>Uma cozinha de bairro que virou marmitaria: receitas de família, feitas em pequenas quantidades, todos os dias.</p>
+      <h4>Artigos de festa</h4>
+      <p>Os itens que você precisa para sua festa, em um só lugar.</p>
     </div>
     <div>
       <h4>Atendimento</h4>
@@ -91,7 +89,7 @@
       </ul>
     </div>
     <div>
-      <h4>Horário da cozinha</h4>
+      <h4>Horário de Atendimento</h4>
       <ul>
         <li>Terça a domingo</li>
         <li>11h às 21h</li>
@@ -428,7 +426,7 @@ function renderDrawer(){
   const body = document.getElementById("drawerBody");
   const entradas = Object.entries(carrinho);
   if(entradas.length === 0){
-    body.innerHTML = `<div class="vazio"><div class="prato-icone ic-principal" style="margin:0 auto;">${svgPrato('principal')}</div><h3>Sua sacola está vazia</h3><p>Adicione pratos do cardápio para começar.</p></div>`;
+    body.innerHTML = `<div class="vazio"><div class="prato-icone ic-principal" style="margin:0 auto;">${svgPrato('principal')}</div><h3>Sua sacola está vazia</h3><p>Adicione nossos produtos para começar.</p></div>`;
   } else {
     body.innerHTML = entradas.map(([id,item]) => {
       const p = produtos.find(x => x.id == id);
@@ -497,7 +495,7 @@ document.querySelectorAll(".chip").forEach(b => b.onclick = () => { definirCateg
 document.querySelectorAll("nav.categorias button").forEach(b => b.onclick = () => { definirCategoria(b.dataset.cat); document.getElementById("cardapio").scrollIntoView({behavior:"smooth"}); });
 
 document.getElementById("btnComoFunciona").onclick = () => {
-  mostrarToast("Escolha os pratos, monte a sacola e finalize com Pix, cartão ou dinheiro", "sacola");
+  mostrarToast("Escolha os produtos, monte a sacola e finalize com Pix, cartão ou dinheiro", "sacola");
 };
 
 /* ---------- TOAST ---------- */
