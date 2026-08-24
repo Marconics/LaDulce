@@ -104,9 +104,9 @@ nav.categorias button.ativo{opacity:1;border-color:var(--mostarda);}
   background:var(--verde);color:var(--creme);
 }
 .hero-esquerda{
-  padding:76px 28px 520px 0;max-width:1180px;margin:0 auto;width:100%;
+  padding:250px 100px 350px 0;max-width:1180px;margin:0 auto;width:100%;
   display:flex;flex-direction:column;justify-content:center;gap:22px;
-  padding-left:28px;
+  padding-left:150px;
 }
 .hero-esquerda .eyebrow{
   font-family:'Caveat',cursive;font-size:20px;color:var(--mostarda);font-weight:700;
