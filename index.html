@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fogão Aceso — Comida de casa, na sua mesa</title>
+<title>LaDulce</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="style.css">
@@ -14,10 +14,8 @@
 <header>
   <div class="header-inner">
     <div class="logo">
-      <div class="brasa"></div>
       <div class="logo-text">
-        <span class="nome">Fogão Aceso</span>
-        <span class="slogan">comida de casa, na sua mesa</span>
+        <img src="logo.svg" alt="LaDulce" width="120">
       </div>
     </div>
     <nav class="categorias" id="navCategorias">
@@ -50,7 +48,9 @@
     </div>
   </div>
   <div class="hero-direita">
-    <div class="pratos-hoje" id="pratosHoje"></div>
+    <div class="foto-hero-direita">
+      <img src="fotos/fundo.jpg" alt="Foto em destaque" onerror="this.remove()">
+    </div>
   </div>
 </section>
 
@@ -77,7 +77,7 @@
 <footer>
   <div class="container footer-grid">
     <div>
-      <h4>Artigos de festa</h4>
+      <h4>LaDulce - Artigos de festa</h4>
       <p>Os itens que você precisa para sua festa, em um só lugar.</p>
     </div>
     <div>
@@ -97,7 +97,7 @@
       </ul>
     </div>
   </div>
-  <div class="footer-baixo container">© 2026 Fogão Aceso — site de demonstração, sem processamento real de pagamentos.</div>
+  <div class="footer-baixo container">© 2026 LaDulce — site de demonstração, sem processamento real de pagamentos.</div>
 </footer>
 
 <button class="carrinho-flutuante" id="carrinhoFlutuante">
@@ -253,21 +253,21 @@
 <script>
 /* ---------- DADOS ---------- */
 const produtos = [
-  {id:1, nome:"Feijoada completa", desc:"Feijão preto, carnes selecionadas, arroz, couve e farofa.", preco:34.90, cat:"principais", icone:"principal", tag:"Mais pedido"},
-  {id:2, nome:"Strogonoff de frango", desc:"Frango cremoso com arroz branco e batata palha.", preco:28.50, cat:"principais", icone:"principal"},
-  {id:3, nome:"Moqueca de peixe", desc:"Peixe fresco no leite de coco, com dendê e pimentão.", preco:39.90, cat:"principais", icone:"principal"},
-  {id:4, nome:"Frango caipira ao molho pardo", desc:"Receita de família, servido com arroz e angu.", preco:32.00, cat:"principais", icone:"principal"},
-  {id:5, nome:"Bife acebolado, arroz e feijão", desc:"O clássico prato caseiro de todo dia.", preco:26.90, cat:"principais", icone:"principal"},
-  {id:6, nome:"Marmita fit frango grelhado", desc:"Frango grelhado, batata doce e legumes no vapor.", preco:22.90, cat:"marmitas", icone:"marmita",},
-  {id:7, nome:"Marmita executiva do dia", desc:"Prato do dia, variando conforme o cardápio da semana.", preco:24.90, cat:"marmitas", icone:"marmita"},
-  {id:8, nome:"Marmita vegetariana", desc:"Grão de bico, legumes assados e quinoa.", preco:23.50, cat:"marmitas", icone:"marmita",},
-  {id:9, nome:"Brigadeiro gourmet (6 un)", desc:"Feito na hora, com chocolate belga.", preco:18.00, cat:"sobremesas", icone:"sobremesa"},
-  {id:10, nome:"Pudim de leite condensado", desc:"Receita da vó, na medida certa de doce.", preco:14.90, cat:"sobremesas", icone:"sobremesa", tag:"Mais pedido"},
-  {id:11, nome:"Bolo de cenoura com cobertura", desc:"Fatia generosa com cobertura de chocolate.", preco:9.90, cat:"sobremesas", icone:"sobremesa"},
-  {id:12, nome:"Pé-de-moleque caseiro", desc:"Amendoim torrado com rapadura.", preco:8.50, cat:"sobremesas", icone:"sobremesa"},
-  {id:13, nome:"Suco de laranja natural", desc:"Espremido na hora, 500ml.", preco:9.00, cat:"bebidas", icone:"bebida"},
-  {id:14, nome:"Água de coco gelada", desc:"Direto do coco, bem gelada, 300ml.", preco:7.50, cat:"bebidas", icone:"bebida"},
-  {id:15, nome:"Suco de acerola", desc:"Fonte de vitamina C, sem açúcar adicionado, 500ml.", preco:9.00, cat:"bebidas", icone:"bebida"},
+  {id:1, nome:"Bolo de Chocolate", desc:"Bolo de chocolate meio amargo trufado", preco:112.90, cat:"principais", icone:"principal", tag:"Mais pedido", imagem:"/fotos/bolo-chocolate.png"},
+  {id:2, nome:"Bolo de Morango", desc:"Massa branca com recheio de morango e ninho", preco:98.50, cat:"principais", icone:"principal", imagem:"/fotos/bolo-morango.jpg"},
+  {id:3, nome:"Bolo de Frutas", desc:"Bolo de frutas frescas com massa branca", preco:39.90, cat:"principais", icone:"principal", imagem:"/fotos/bolo-branco.jpg"},
+  {id:4, nome:"Bolo de Doce de Leite", desc:"Massa branca com recheio de leite moça", preco:32.00, cat:"principais", icone:"principal", imagem:"fotos/doce-leita.jpg"},
+  {id:5, nome:"Brigadeiro", desc:"O clássico brigadeiro", preco:26.90, cat:"principais", icone:"principal", tag:"Mais pedido", imagem:"fotos/brigadeiro.jpg"},
+  {id:6, nome:"Beijinho", desc:"Beijinho tradicional", preco:22.90, cat:"marmitas", icone:"marmita", imagem:"fotos/beijinho.png"},
+  {id:7, nome:"Coxinha", desc:"Coxinha frita com recheio de frango", preco:43.90, cat:"marmitas", icone:"marmita", imagem:"fotos/coxinha.png"},
+  {id:8, nome:"Coca Cola", desc:"Coca Cola 2L", preco:9.50, cat:"marmitas", icone:"marmita", imagem:"fotos/coca.png"},
+  {id:9, nome:"Guaraná", desc:"Guaraná de 2L", preco:8.00, cat:"sobremesas", icone:"sobremesa", imagem:"fotos/guarana.png"},
+  {id:10, nome:"Pastel", desc:"20 pasteis de carne", preco:40.90, cat:"sobremesas", icone:"sobremesa", tag:"Mais pedido", imagem:"fotos/pastel.png"},
+  {id:11, nome:"Pizza", desc:"20 unidades de pizza", preco:43.00, cat:"sobremesas", icone:"sobremesa", imagem:"fotos/pizza.jpg"},
+  {id:12, nome:"Sprite", desc:"Sprite de 2L", preco:8.50, cat:"sobremesas", icone:"sobremesa", imagem:"fotos/sprite.png"},
+  {id:13, nome:"Morango com Chocolate", desc:"30 unidades de morango com cobertura de chocolate", preco:35.00, cat:"bebidas", icone:"bebida", imagem:"fotos/bombom-morango.jpg"},
+  {id:14, nome:"Fanta Uva", desc:"Fanta Uva de 2L", preco:7.50, cat:"bebidas", icone:"bebida", imagem:"fotos/fanta.png"},
+  {id:15, nome:"Bolo Rosa", desc:"Bolo decorado com massa branca e morango", preco:134.90, cat:"bebidas", icone:"bebida", imagem:"fotos/bolo-rosa.jpg"},
 ];
 
 const nomesCategoria = {todos:"Cardápio de hoje", principais:"Pratos principais", marmitas:"Marmitas", sobremesas:"Sobremesas", bebidas:"Bebidas"};
@@ -294,19 +294,15 @@ function svgPrato(icone){
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+paths[icone]+'</svg>';
 }
 
-function iconeCoracao(preenchido){
-  return '<svg viewBox="0 0 24 24" fill="'+(preenchido?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8 2 4.5 5.6 4c2-.3 3.8.7 4.9 2.3C11.6 4.7 13.4 3.7 15.4 4c3.6.5 5.2 4 3.6 7.7C16.5 16.4 12 21 12 21z"/></svg>';
+/* ---------- Imagem do produto com fallback para o ícone ---------- */
+function imagemProduto(p, tamanho){
+  const cls = tamanho ? ' style="width:'+tamanho+'px;height:'+tamanho+'px;"' : '';
+  const img = p.imagem ? '<img src="'+p.imagem+'" alt="'+p.nome+'" loading="lazy" onerror="this.remove()">' : '';
+  return '<div class="prato-icone ic-'+p.icone+'"'+cls+'>'+img+svgPrato(p.icone)+'</div>';
 }
 
-/* ---------- HERO: pratos do dia ---------- */
-function renderPratosHoje(){
-  const destaques = [produtos[0], produtos[9], produtos[5], produtos[12]];
-  document.getElementById("pratosHoje").innerHTML = destaques.map(p => `
-    <div class="mini-card">
-      <div class="prato-icone ic-${p.icone}" style="width:44px;height:44px;">${svgPrato(p.icone).replace('width="28" height="28"','width="20" height="20"')}</div>
-      <p>${p.nome}</p>
-    </div>
-  `).join("");
+function iconeCoracao(preenchido){
+  return '<svg viewBox="0 0 24 24" fill="'+(preenchido?'currentColor':'none')+'" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8 2 4.5 5.6 4c2-.3 3.8.7 4.9 2.3C11.6 4.7 13.4 3.7 15.4 4c3.6.5 5.2 4 3.6 7.7C16.5 16.4 12 21 12 21z"/></svg>';
 }
 
 /* ---------- RENDER PRODUTOS ---------- */
@@ -339,7 +335,7 @@ function renderProdutos(){
     return `
     <div class="card">
       <div class="card-top">
-        <div class="prato-icone ic-${p.icone}">${svgPrato(p.icone)}</div>
+        ${imagemProduto(p)}
         <button class="fav-btn ${fav?'favoritado':''}" onclick="alternarFavorito(${p.id})" aria-label="Favoritar ${p.nome}">${iconeCoracao(fav)}</button>
       </div>
       ${p.tag ? `<span class="card-tag">${p.tag}</span>` : ''}
@@ -432,7 +428,7 @@ function renderDrawer(){
       const p = produtos.find(x => x.id == id);
       return `
       <div class="item-carrinho">
-        <div class="prato-icone ic-${p.icone}">${svgPrato(p.icone)}</div>
+        ${imagemProduto(p, 46)}
         <div class="item-info">
           <span class="nome-item">${p.nome}</span>
           <div class="linha-baixo">
@@ -608,7 +604,6 @@ document.getElementById("btnNovoPedido").onclick = () => {
 };
 
 /* ---------- INIT ---------- */
-renderPratosHoje();
 renderProdutos();
 atualizarBadges();
 </script>
