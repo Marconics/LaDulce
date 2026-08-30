@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar - LaDulce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-text">
+        <img src="fotos/logo.png" alt="LaDulce" width="120">
+      </div>
+    </div>
+    <nav class="categorias"></nav>
+    <div class="header-actions">
+      <a href="index.html" class="btn btn-outline" style="color:var(--creme);padding:9px 18px;font-size:13.5px;">Voltar à loja</a>
+    </div>
+  </div>
+</header>
+
+<section class="auth-tela">
+  <div class="auth-marca">
+    <div class="eyebrow"><span class="traco"></span> Que bom te ver de novo!</div>
+    <h1>Entre na sua conta e continue pedindo</h1>
+    <p>Acompanhe seus pedidos, guarde seus favoritos e finalize sua compra mais rápido da próxima vez.</p>
+    <ul>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        Histórico dos seus pedidos
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        Favoritos salvos na sua conta
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        Checkout mais rápido
+      </li>
+    </ul>
+  </div>
+
+  <div class="auth-formulario">
+    <div class="auth-card">
+      <h2>Entrar</h2>
+      <p class="auth-sub">Informe seus dados para acessar sua conta.</p>
+
+      <form class="auth-form" id="formLogin">
+        <div class="campo">
+          <label for="lEmail">E-mail</label>
+          <input id="lEmail" type="email" placeholder="voce@email.com" required>
+        </div>
+
+        <div class="campo">
+          <label for="lSenha">Senha</label>
+          <div class="campo-senha">
+            <input id="lSenha" type="password" placeholder="Sua senha" required>
+            <button type="button" class="toggle-senha" data-alvo="lSenha" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-tijolo btn-full">Entrar</button>
+      </form>
+
+      <p class="auth-rodape">Ainda não tem conta? <a href="cadastro.html">Criar conta</a></p>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+document.querySelectorAll(".toggle-senha").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const alvo = document.getElementById(btn.dataset.alvo);
+    alvo.type = alvo.type === "password" ? "text" : "password";
+  });
+});
+
+let toastTimeout;
+function mostrarToast(msg){
+  const toast = document.getElementById("toast");
+  toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>'+msg+'</span>';
+  toast.classList.add("mostrar");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove("mostrar"), 2400);
+}
+
+document.getElementById("formLogin").addEventListener("submit", e => {
+  e.preventDefault();
+  mostrarToast("Login simulado — sem backend conectado ainda");
+});
+</script>
+
+</body>
+</html>

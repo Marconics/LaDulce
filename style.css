@@ -631,3 +631,66 @@ footer a:hover{color:var(--mostarda);}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
 }
+
+/* ---------- AUTENTICAÇÃO (login / cadastro) ---------- */
+.auth-tela{
+  min-height:calc(100vh - 75px);
+  display:grid;grid-template-columns:1fr 1fr;
+}
+.auth-marca{
+  background:var(--verde);color:var(--creme);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px 70px;
+}
+.auth-marca .eyebrow{
+  font-family:'Caveat',cursive;font-size:20px;color:var(--mostarda);font-weight:700;
+  display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+.auth-marca .eyebrow .traco{width:34px;height:2px;background:var(--mostarda);display:inline-block;}
+.auth-marca h1{font-size:38px;line-height:1.12;color:var(--creme);max-width:380px;margin-bottom:16px;}
+.auth-marca p{font-size:16px;color:#EAD9D2;max-width:360px;line-height:1.6;margin:0;}
+.auth-marca ul{list-style:none;padding:0;margin:32px 0 0;display:flex;flex-direction:column;gap:14px;}
+.auth-marca li{display:flex;align-items:center;gap:12px;font-size:14.5px;color:#EAD9D2;}
+.auth-marca li svg{width:20px;height:20px;color:var(--mostarda);flex-shrink:0;}
+
+.auth-formulario{
+  background:var(--papel);display:flex;align-items:center;justify-content:center;
+  padding:60px 28px;
+}
+.auth-card{
+  width:100%;max-width:400px;background:var(--creme);border:1px solid var(--linha);
+  border-radius:var(--radius);box-shadow:var(--sombra);padding:36px 32px;
+}
+.auth-card h2{font-size:24px;margin-bottom:6px;}
+.auth-sub{font-size:14px;color:var(--tinta-suave);margin:0 0 26px;}
+.auth-form{display:flex;flex-direction:column;gap:16px;}
+
+.campo-senha{position:relative;}
+.campo-senha input{width:100%;padding-right:44px;}
+.campo-senha button{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--tinta-suave);width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;border-radius:8px;
+}
+.campo-senha button:hover{background:var(--papel-2);color:var(--tinta);}
+.campo-senha button svg{width:18px;height:18px;}
+
+.checkbox-linha{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;color:var(--tinta-suave);}
+.checkbox-linha label{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.checkbox-linha input[type="checkbox"]{width:16px;height:16px;accent-color:var(--verde);}
+.checkbox-linha a{color:var(--tijolo-escuro);font-weight:600;}
+.checkbox-linha a:hover{text-decoration:underline;}
+
+.auth-termos{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--tinta-suave);line-height:1.5;cursor:pointer;}
+.auth-termos input[type="checkbox"]{width:16px;height:16px;accent-color:var(--verde);margin-top:2px;flex-shrink:0;}
+.auth-termos a{color:var(--tijolo-escuro);font-weight:600;}
+
+.auth-rodape{text-align:center;font-size:14px;color:var(--tinta-suave);margin-top:22px;}
+.auth-rodape a{color:var(--tijolo-escuro);font-weight:700;}
+.auth-rodape a:hover{text-decoration:underline;}
+
+@media (max-width:860px){
+  .auth-tela{grid-template-columns:1fr;}
+  .auth-marca{display:none;}
+  .auth-formulario{padding:40px 20px;}
+}
