@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel administrativo - LaDulce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-text">
+        <img src="fotos/logo.png" alt="LaDulce" width="150">
+      </div>
+    </div>
+    <nav class="categorias"></nav>
+    <div class="header-actions">
+      <a href="index.html" class="btn btn-outline" style="color:var(--creme);padding:9px 18px;font-size:13.5px;">Ver loja</a>
+    </div>
+  </div>
+</header>
+
+<div class="admin-faixa">
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="tag-admin">Admin</span>
+      <span>Você está no painel administrativo do cardápio</span>
+    </div>
+    <a href="index.html">Sair do painel</a>
+  </div>
+</div>
+
+<main class="container" style="padding:40px 28px 80px;">
+
+  <div class="admin-topo">
+    <div>
+      <h2>Produtos</h2>
+      <p>Adicione, edite ou remova os itens do cardápio da loja.</p>
+    </div>
+    <button class="btn btn-tijolo" id="btnNovoProduto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Novo produto
+    </button>
+  </div>
+
+  <div class="admin-stats" id="adminStats"></div>
+
+  <div class="admin-grid" id="adminGrid"></div>
+
+</main>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="drawer" id="drawerProduto" aria-label="Formulário de produto">
+  <div class="drawer-head">
+    <h2 id="tituloDrawer">Novo produto</h2>
+    <button class="fechar-btn" id="fecharDrawerProduto" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body">
+    <form id="formProduto" class="auth-form">
+      <input type="hidden" id="pId">
+
+      <div class="campo">
+        <label for="pNome">Nome do produto</label>
+        <input id="pNome" type="text" placeholder="Ex: Bolo de Chocolate" required>
+      </div>
+
+      <div class="campo">
+        <label for="pDesc">Descrição</label>
+        <textarea id="pDesc" rows="3" placeholder="Descreva o produto em poucas palavras" required></textarea>
+      </div>
+
+      <div class="linha-campos">
+        <div class="campo">
+          <label for="pPreco">Preço (R$)</label>
+          <input id="pPreco" type="number" min="0" step="0.01" placeholder="0,00" required>
+        </div>
+        <div class="campo">
+          <label for="pCategoria">Categoria</label>
+          <select id="pCategoria" required>
+            <option value="principais">Bolos</option>
+            <option value="marmitas">BomBons</option>
+            <option value="sobremesas">Salgadinhos</option>
+            <option value="bebidas">Refrigerantes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="pTag">Selo (opcional)</label>
+        <input id="pTag" type="text" placeholder="Ex: Mais pedido">
+      </div>
+
+      <div class="campo">
+        <label for="pImagem">Caminho da imagem</label>
+        <input id="pImagem" type="text" placeholder="fotos/nome-do-produto.jpg">
+      </div>
+    </form>
+  </div>
+  <div class="drawer-footer">
+    <div class="acoes-passo">
+      <button class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);" id="cancelarProduto">Cancelar</button>
+      <button class="btn btn-tijolo" id="salvarProduto">Salvar produto</button>
+    </div>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- DADOS (demonstração em memória, sem banco de dados ainda) ---------- */
+let produtos = [
+  {id:1, nome:"Bolo de Chocolate", desc:"Bolo de chocolate meio amargo trufado", preco:112.90, cat:"principais", tag:"Mais pedido", imagem:"fotos/bolo-chocolate.png"},
+  {id:2, nome:"Bolo de Morango", desc:"Massa branca com recheio de morango e ninho", preco:98.50, cat:"principais", imagem:"fotos/bolo-morango.jpg"},
+  {id:3, nome:"Bolo de Frutas", desc:"Bolo de frutas frescas com massa branca", preco:39.90, cat:"principais", imagem:"fotos/bolo-branco.jpg"},
+  {id:4, nome:"Brigadeiro", desc:"O clássico brigadeiro", preco:26.90, cat:"principais", tag:"Mais pedido", imagem:"fotos/brigadeiro.jpg"},
+  {id:5, nome:"Beijinho", desc:"Beijinho tradicional", preco:22.90, cat:"marmitas", imagem:"fotos/beijinho.png"},
+  {id:6, nome:"Coxinha", desc:"Coxinha frita com recheio de frango", preco:43.90, cat:"marmitas", imagem:"fotos/coxinha.png"},
+  {id:7, nome:"Coca Cola", desc:"Coca Cola 2L", preco:9.50, cat:"marmitas", imagem:"fotos/coca.png"},
+  {id:8, nome:"Pastel", desc:"20 pasteis de carne", preco:40.90, cat:"sobremesas", tag:"Mais pedido", imagem:"fotos/pastel.png"},
+  {id:9, nome:"Pizza", desc:"20 unidades de pizza", preco:43.00, cat:"sobremesas", imagem:"fotos/pizza.jpg"},
+  {id:10, nome:"Fanta Uva", desc:"Fanta Uva de 2L", preco:7.50, cat:"bebidas", imagem:"fotos/fanta.png"},
+];
+
+const nomesCategoria = {principais:"Bolos", marmitas:"BomBons", sobremesas:"Salgadinhos", bebidas:"Refrigerantes"};
+let proximoId = 11;
+let editandoId = null;
+
+const fmt = v => "R$ " + Number(v).toFixed(2).replace(".", ",");
+
+/* ---------- RENDER ---------- */
+function renderStats(){
+  const box = document.getElementById("adminStats");
+  const categoriasAtivas = new Set(produtos.map(p => p.cat)).size;
+  const destaques = produtos.filter(p => p.tag).length;
+  box.innerHTML = `
+    <div class="admin-stat"><span>Total de produtos</span><strong>${produtos.length}</strong></div>
+    <div class="admin-stat"><span>Categorias ativas</span><strong>${categoriasAtivas}</strong></div>
+    <div class="admin-stat"><span>Com selo de destaque</span><strong>${destaques}</strong></div>
+  `;
+}
+
+function renderGrid(){
+  const grid = document.getElementById("adminGrid");
+  const cards = produtos.map(p => `
+    <div class="admin-card">
+      <div class="admin-card-imagem">
+        ${p.tag ? `<span class="admin-card-tag">${p.tag}</span>` : ""}
+        ${p.imagem ? `<img src="${p.imagem}" alt="${p.nome}" onerror="this.remove()">` : ""}
+      </div>
+      <div class="admin-card-corpo">
+        <span class="admin-card-cat">${nomesCategoria[p.cat] || p.cat}</span>
+        <h3>${p.nome}</h3>
+        <p>${p.desc}</p>
+        <div class="admin-card-rodape">
+          <span class="admin-card-preco">${fmt(p.preco)}</span>
+          <div class="admin-card-acoes">
+            <button class="admin-icone-btn" onclick="editarProduto(${p.id})" aria-label="Editar ${p.nome}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+            </button>
+            <button class="admin-icone-btn excluir" onclick="excluirProduto(${p.id})" aria-label="Excluir ${p.nome}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  grid.innerHTML = cards + `
+    <button class="admin-card-novo" id="btnNovoProdutoTile" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Adicionar produto
+    </button>
+  `;
+  document.getElementById("btnNovoProdutoTile").onclick = abrirNovoProduto;
+}
+
+function renderTudo(){
+  renderStats();
+  renderGrid();
+}
+
+/* ---------- DRAWER ---------- */
+const overlay = document.getElementById("overlay");
+const drawer = document.getElementById("drawerProduto");
+
+function abrirDrawer(){
+  overlay.classList.add("aberto");
+  drawer.classList.add("aberto");
+}
+function fecharDrawer(){
+  overlay.classList.remove("aberto");
+  drawer.classList.remove("aberto");
+}
+
+function limparForm(){
+  document.getElementById("formProduto").reset();
+  document.getElementById("pId").value = "";
+  editandoId = null;
+}
+
+function abrirNovoProduto(){
+  limparForm();
+  document.getElementById("tituloDrawer").textContent = "Novo produto";
+  abrirDrawer();
+}
+
+function editarProduto(id){
+  const p = produtos.find(x => x.id === id);
+  if(!p) return;
+  editandoId = id;
+  document.getElementById("tituloDrawer").textContent = "Editar produto";
+  document.getElementById("pId").value = p.id;
+  document.getElementById("pNome").value = p.nome;
+  document.getElementById("pDesc").value = p.desc;
+  document.getElementById("pPreco").value = p.preco;
+  document.getElementById("pCategoria").value = p.cat;
+  document.getElementById("pTag").value = p.tag || "";
+  document.getElementById("pImagem").value = p.imagem || "";
+  abrirDrawer();
+}
+
+function excluirProduto(id){
+  const p = produtos.find(x => x.id === id);
+  if(!p) return;
+  if(!confirm(`Remover "${p.nome}" do cardápio?`)) return;
+  produtos = produtos.filter(x => x.id !== id);
+  renderTudo();
+  mostrarToast(p.nome + " removido do cardápio");
+}
+
+document.getElementById("btnNovoProduto").onclick = abrirNovoProduto;
+document.getElementById("fecharDrawerProduto").onclick = fecharDrawer;
+document.getElementById("cancelarProduto").onclick = fecharDrawer;
+overlay.onclick = fecharDrawer;
+
+document.getElementById("salvarProduto").onclick = () => {
+  const form = document.getElementById("formProduto");
+  if(!form.reportValidity()) return;
+
+  const dados = {
+    nome: document.getElementById("pNome").value.trim(),
+    desc: document.getElementById("pDesc").value.trim(),
+    preco: parseFloat(document.getElementById("pPreco").value),
+    cat: document.getElementById("pCategoria").value,
+    tag: document.getElementById("pTag").value.trim(),
+    imagem: document.getElementById("pImagem").value.trim(),
+  };
+
+  if(editandoId){
+    const i = produtos.findIndex(x => x.id === editandoId);
+    produtos[i] = {...produtos[i], ...dados};
+    mostrarToast("Produto atualizado");
+  } else {
+    produtos.push({id: proximoId++, ...dados});
+    mostrarToast("Produto adicionado ao cardápio");
+  }
+
+  fecharDrawer();
+  renderTudo();
+};
+
+/* ---------- TOAST ---------- */
+let toastTimeout;
+function mostrarToast(msg){
+  const toast = document.getElementById("toast");
+  toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>'+msg+'</span>';
+  toast.classList.add("mostrar");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove("mostrar"), 2400);
+}
+
+/* ---------- INIT ---------- */
+renderTudo();
+</script>
+
+</body>
+</html>
