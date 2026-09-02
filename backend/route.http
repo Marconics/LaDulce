@@ -1,0 +1,17 @@
+//ROUTE.HTTP tem a função de testar as ROTAS URL.
+//NÃO é necessario para o código,
+//necessario apenas para manter sanidade mental
+
+// --------------------------
+// Categorias
+
+POST http://localhost:3333/categorias/cadastrar
+Content-Type: application/json
+
+{
+  "nome": "Doces",
+  "descricao": "Diversos tipos de doces, como bala, chocolate, etc."
+}
+
+
+###

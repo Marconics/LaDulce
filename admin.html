@@ -66,6 +66,8 @@
   <div class="drawer-body">
     <form id="formProduto" class="auth-form">
       <input type="hidden" id="pId">
+      <input type="hidden" id="pImagemBase64">
+      <input type="hidden" id="pImagemAtual">
 
       <div class="campo">
         <label for="pNome">Nome do produto</label>
@@ -85,22 +87,23 @@
         <div class="campo">
           <label for="pCategoria">Categoria</label>
           <select id="pCategoria" required>
-            <option value="principais">Bolos</option>
-            <option value="marmitas">BomBons</option>
-            <option value="sobremesas">Salgadinhos</option>
-            <option value="bebidas">Refrigerantes</option>
+            <option value="" disabled selected>Selecione...</option>
           </select>
         </div>
       </div>
 
-      <div class="campo">
-        <label for="pTag">Selo (opcional)</label>
-        <input id="pTag" type="text" placeholder="Ex: Mais pedido">
+      <div class="campo" style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+        <input id="pDisponivel" type="checkbox" checked style="width:auto;margin:0;">
+        <label for="pDisponivel" style="margin:0;cursor:pointer;">Produto disponível</label>
       </div>
 
       <div class="campo">
-        <label for="pImagem">Caminho da imagem</label>
-        <input id="pImagem" type="text" placeholder="fotos/nome-do-produto.jpg">
+        <label for="pImagem">Foto do produto</label>
+        <input id="pImagem" type="file" accept="image/*">
+        <div id="previewImagem" style="margin-top:8px;"></div>
+        <button type="button" id="btnRemoverFoto" style="display:none;margin-top:6px;font-size:12px;color:#888;background:none;border:none;cursor:pointer;padding:0;">
+          ✕ Remover foto
+        </button>
       </div>
     </form>
   </div>
@@ -115,171 +118,269 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ---------- DADOS (demonstração em memória, sem banco de dados ainda) ---------- */
-let produtos = [
-  {id:1, nome:"Bolo de Chocolate", desc:"Bolo de chocolate meio amargo trufado", preco:112.90, cat:"principais", tag:"Mais pedido", imagem:"fotos/bolo-chocolate.png"},
-  {id:2, nome:"Bolo de Morango", desc:"Massa branca com recheio de morango e ninho", preco:98.50, cat:"principais", imagem:"fotos/bolo-morango.jpg"},
-  {id:3, nome:"Bolo de Frutas", desc:"Bolo de frutas frescas com massa branca", preco:39.90, cat:"principais", imagem:"fotos/bolo-branco.jpg"},
-  {id:4, nome:"Brigadeiro", desc:"O clássico brigadeiro", preco:26.90, cat:"principais", tag:"Mais pedido", imagem:"fotos/brigadeiro.jpg"},
-  {id:5, nome:"Beijinho", desc:"Beijinho tradicional", preco:22.90, cat:"marmitas", imagem:"fotos/beijinho.png"},
-  {id:6, nome:"Coxinha", desc:"Coxinha frita com recheio de frango", preco:43.90, cat:"marmitas", imagem:"fotos/coxinha.png"},
-  {id:7, nome:"Coca Cola", desc:"Coca Cola 2L", preco:9.50, cat:"marmitas", imagem:"fotos/coca.png"},
-  {id:8, nome:"Pastel", desc:"20 pasteis de carne", preco:40.90, cat:"sobremesas", tag:"Mais pedido", imagem:"fotos/pastel.png"},
-  {id:9, nome:"Pizza", desc:"20 unidades de pizza", preco:43.00, cat:"sobremesas", imagem:"fotos/pizza.jpg"},
-  {id:10, nome:"Fanta Uva", desc:"Fanta Uva de 2L", preco:7.50, cat:"bebidas", imagem:"fotos/fanta.png"},
-];
+const API_PRODUTOS    = 'http://localhost:3333/produtos'
+const API_CATEGORIAS  = 'http://localhost:3333/categorias'
+const fmt = v => "R$ " + Number(v).toFixed(2).replace(".", ",")
+let editandoId = null
 
-const nomesCategoria = {principais:"Bolos", marmitas:"BomBons", sobremesas:"Salgadinhos", bebidas:"Refrigerantes"};
-let proximoId = 11;
-let editandoId = null;
+/* ---------- FETCH HELPER ---------- */
+async function apiFetch(url, options = {}) {
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.mensagem || 'Erro na requisição')
+  }
+  return res.json().catch(() => ({}))
+}
 
-const fmt = v => "R$ " + Number(v).toFixed(2).replace(".", ",");
+/* ---------- CATEGORIAS ---------- */
+async function carregarCategorias() {
+  try {
+    const data = await apiFetch(API_CATEGORIAS + '/listar')
+    const categorias = data?.categorias ?? []
+    const select = document.getElementById('pCategoria')
+    select.innerHTML = '<option value="" disabled selected>Selecione...</option>'
+    categorias.forEach(c => {
+      const opt = document.createElement('option')
+      opt.value = c.id
+      opt.textContent = c.nome
+      select.appendChild(opt)
+    })
+  } catch (e) {
+    console.error('Erro ao carregar categorias:', e)
+  }
+}
 
-/* ---------- RENDER ---------- */
-function renderStats(){
-  const box = document.getElementById("adminStats");
-  const categoriasAtivas = new Set(produtos.map(p => p.cat)).size;
-  const destaques = produtos.filter(p => p.tag).length;
+/* ---------- RENDER STATS ---------- */
+function renderStats(produtos) {
+  const box = document.getElementById('adminStats')
+  const categoriasAtivas = new Set(produtos.map(p => p.categoriaId)).size
+  const disponiveis = produtos.filter(p => p.disponivel).length
   box.innerHTML = `
     <div class="admin-stat"><span>Total de produtos</span><strong>${produtos.length}</strong></div>
     <div class="admin-stat"><span>Categorias ativas</span><strong>${categoriasAtivas}</strong></div>
-    <div class="admin-stat"><span>Com selo de destaque</span><strong>${destaques}</strong></div>
-  `;
+    <div class="admin-stat"><span>Disponíveis</span><strong>${disponiveis}</strong></div>
+  `
 }
 
-function renderGrid(){
-  const grid = document.getElementById("adminGrid");
+/* ---------- RENDER GRID ---------- */
+async function renderGrid() {
+  const grid = document.getElementById('adminGrid')
+  grid.innerHTML = '<p style="opacity:.5;padding:20px 0;">Carregando produtos...</p>'
+
+  let produtos = []
+  try {
+    const data = await apiFetch(API_PRODUTOS + '/listar')
+    produtos = data.produtos ?? []
+  } catch (e) {
+    grid.innerHTML = '<p style="color:red;padding:20px 0;">Erro ao carregar produtos. Verifique se o servidor está rodando.</p>'
+    return
+  }
+
+  renderStats(produtos)
+
+  if (produtos.length === 0) {
+    grid.innerHTML = `
+      <button class="admin-card-novo" id="btnNovoProdutoTile" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar produto
+      </button>
+    `
+    document.getElementById('btnNovoProdutoTile').onclick = abrirNovoProduto
+    return
+  }
+
   const cards = produtos.map(p => `
     <div class="admin-card">
       <div class="admin-card-imagem">
-        ${p.tag ? `<span class="admin-card-tag">${p.tag}</span>` : ""}
-        ${p.imagem ? `<img src="${p.imagem}" alt="${p.nome}" onerror="this.remove()">` : ""}
+        ${!p.disponivel ? `<span class="admin-card-tag" style="background:#888">Indisponível</span>` : ''}
+        ${p.imagemUrl ? `<img src="${p.imagemUrl}" alt="${p.nome}" onerror="this.remove()">` : ''}
       </div>
       <div class="admin-card-corpo">
-        <span class="admin-card-cat">${nomesCategoria[p.cat] || p.cat}</span>
+        <span class="admin-card-cat">${p.categoria?.nome ?? ''}</span>
         <h3>${p.nome}</h3>
-        <p>${p.desc}</p>
+        <p>${p.descricao ?? ''}</p>
         <div class="admin-card-rodape">
           <span class="admin-card-preco">${fmt(p.preco)}</span>
           <div class="admin-card-acoes">
             <button class="admin-icone-btn" onclick="editarProduto(${p.id})" aria-label="Editar ${p.nome}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
             </button>
-            <button class="admin-icone-btn excluir" onclick="excluirProduto(${p.id})" aria-label="Excluir ${p.nome}">
+            <button class="admin-icone-btn excluir" onclick="excluirProduto(${p.id}, '${p.nome.replace(/'/g, "\\'")}')" aria-label="Excluir ${p.nome}">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
             </button>
           </div>
         </div>
       </div>
     </div>
-  `).join("");
+  `).join('')
 
   grid.innerHTML = cards + `
     <button class="admin-card-novo" id="btnNovoProdutoTile" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
       Adicionar produto
     </button>
-  `;
-  document.getElementById("btnNovoProdutoTile").onclick = abrirNovoProduto;
-}
-
-function renderTudo(){
-  renderStats();
-  renderGrid();
+  `
+  document.getElementById('btnNovoProdutoTile').onclick = abrirNovoProduto
 }
 
 /* ---------- DRAWER ---------- */
-const overlay = document.getElementById("overlay");
-const drawer = document.getElementById("drawerProduto");
+const overlay = document.getElementById('overlay')
+const drawer  = document.getElementById('drawerProduto')
 
-function abrirDrawer(){
-  overlay.classList.add("aberto");
-  drawer.classList.add("aberto");
-}
-function fecharDrawer(){
-  overlay.classList.remove("aberto");
-  drawer.classList.remove("aberto");
-}
+function abrirDrawer()  { overlay.classList.add('aberto');    drawer.classList.add('aberto') }
+function fecharDrawer() { overlay.classList.remove('aberto'); drawer.classList.remove('aberto') }
 
-function limparForm(){
-  document.getElementById("formProduto").reset();
-  document.getElementById("pId").value = "";
-  editandoId = null;
-}
-
-function abrirNovoProduto(){
-  limparForm();
-  document.getElementById("tituloDrawer").textContent = "Novo produto";
-  abrirDrawer();
+function limparForm() {
+  document.getElementById('formProduto').reset()
+  document.getElementById('pId').value           = ''
+  document.getElementById('pImagemBase64').value = ''
+  document.getElementById('pImagemAtual').value  = ''
+  document.getElementById('previewImagem').innerHTML = ''
+  document.getElementById('btnRemoverFoto').style.display = 'none'
+  document.getElementById('pDisponivel').checked = true
+  editandoId = null
 }
 
-function editarProduto(id){
-  const p = produtos.find(x => x.id === id);
-  if(!p) return;
-  editandoId = id;
-  document.getElementById("tituloDrawer").textContent = "Editar produto";
-  document.getElementById("pId").value = p.id;
-  document.getElementById("pNome").value = p.nome;
-  document.getElementById("pDesc").value = p.desc;
-  document.getElementById("pPreco").value = p.preco;
-  document.getElementById("pCategoria").value = p.cat;
-  document.getElementById("pTag").value = p.tag || "";
-  document.getElementById("pImagem").value = p.imagem || "";
-  abrirDrawer();
+function abrirNovoProduto() {
+  limparForm()
+  document.getElementById('tituloDrawer').textContent = 'Novo produto'
+  abrirDrawer()
 }
 
-function excluirProduto(id){
-  const p = produtos.find(x => x.id === id);
-  if(!p) return;
-  if(!confirm(`Remover "${p.nome}" do cardápio?`)) return;
-  produtos = produtos.filter(x => x.id !== id);
-  renderTudo();
-  mostrarToast(p.nome + " removido do cardápio");
+async function editarProduto(id) {
+  editandoId = id
+  document.getElementById('tituloDrawer').textContent = 'Editar produto'
+  limparForm()
+  editandoId = id
+
+  try {
+    const produto = await apiFetch(API_PRODUTOS + `/listar/${id}`)
+    document.getElementById('pId').value           = produto.id
+    document.getElementById('pNome').value         = produto.nome
+    document.getElementById('pDesc').value         = produto.descricao ?? ''
+    document.getElementById('pPreco').value        = produto.preco
+    document.getElementById('pCategoria').value    = produto.categoriaId
+    document.getElementById('pDisponivel').checked = produto.disponivel
+    document.getElementById('pImagemAtual').value  = produto.imagemUrl ?? ''
+
+    if (produto.imagemUrl) {
+      document.getElementById('previewImagem').innerHTML =
+        `<img src="${produto.imagemUrl}" style="width:100%;border-radius:8px;">`
+      document.getElementById('btnRemoverFoto').style.display = 'block'
+    }
+
+    abrirDrawer()
+  } catch (e) {
+    mostrarToast('Erro ao carregar produto')
+  }
 }
 
-document.getElementById("btnNovoProduto").onclick = abrirNovoProduto;
-document.getElementById("fecharDrawerProduto").onclick = fecharDrawer;
-document.getElementById("cancelarProduto").onclick = fecharDrawer;
-overlay.onclick = fecharDrawer;
+async function excluirProduto(id, nome) {
+  if (!confirm(`Remover "${nome}" do cardápio?`)) return
+  try {
+    await apiFetch(API_PRODUTOS + `/excluir/${id}`, { method: 'DELETE' })
+    mostrarToast(`${nome} removido do cardápio`)
+    renderGrid()
+  } catch (e) {
+    mostrarToast('Erro ao excluir: ' + e.message)
+  }
+}
 
-document.getElementById("salvarProduto").onclick = () => {
-  const form = document.getElementById("formProduto");
-  if(!form.reportValidity()) return;
+/* ---------- EVENTOS DRAWER ---------- */
+document.getElementById('btnNovoProduto').onclick      = abrirNovoProduto
+document.getElementById('fecharDrawerProduto').onclick = fecharDrawer
+document.getElementById('cancelarProduto').onclick     = fecharDrawer
+overlay.onclick                                        = fecharDrawer
 
-  const dados = {
-    nome: document.getElementById("pNome").value.trim(),
-    desc: document.getElementById("pDesc").value.trim(),
-    preco: parseFloat(document.getElementById("pPreco").value),
-    cat: document.getElementById("pCategoria").value,
-    tag: document.getElementById("pTag").value.trim(),
-    imagem: document.getElementById("pImagem").value.trim(),
-  };
+/* ---------- PREVIEW DE IMAGEM ---------- */
+document.getElementById('pImagem').addEventListener('change', e => {
+  const file = e.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = ev => {
+    document.getElementById('pImagemBase64').value = ev.target.result.split(',')[1]
+    document.getElementById('pImagemAtual').value  = ''
+    document.getElementById('previewImagem').innerHTML =
+      `<img src="${ev.target.result}" style="width:100%;border-radius:8px;">`
+    document.getElementById('btnRemoverFoto').style.display = 'block'
+  }
+  reader.readAsDataURL(file)
+})
 
-  if(editandoId){
-    const i = produtos.findIndex(x => x.id === editandoId);
-    produtos[i] = {...produtos[i], ...dados};
-    mostrarToast("Produto atualizado");
+/* ---------- REMOVER FOTO ---------- */
+document.getElementById('btnRemoverFoto').onclick = () => {
+  document.getElementById('pImagemBase64').value     = ''
+  document.getElementById('pImagemAtual').value      = 'REMOVER'
+  document.getElementById('previewImagem').innerHTML = '<span style="font-size:13px;opacity:.5;">Sem foto</span>'
+  document.getElementById('btnRemoverFoto').style.display = 'none'
+  document.getElementById('pImagem').value           = ''
+}
+
+/* ---------- SALVAR ---------- */
+document.getElementById('salvarProduto').onclick = async () => {
+  const form = document.getElementById('formProduto')
+  if (!form.reportValidity()) return
+
+  const base64      = document.getElementById('pImagemBase64').value
+  const imagemAtual = document.getElementById('pImagemAtual').value
+
+  let imagemUrl
+  if (base64) {
+    imagemUrl = base64
+  } else if (imagemAtual === 'REMOVER') {
+    imagemUrl = null
   } else {
-    produtos.push({id: proximoId++, ...dados});
-    mostrarToast("Produto adicionado ao cardápio");
+    imagemUrl = undefined
   }
 
-  fecharDrawer();
-  renderTudo();
-};
+  const dados = {
+    nome:        document.getElementById('pNome').value.trim(),
+    descricao:   document.getElementById('pDesc').value.trim(),
+    preco:       parseFloat(document.getElementById('pPreco').value),
+    categoriaId: parseInt(document.getElementById('pCategoria').value),
+    disponivel:  document.getElementById('pDisponivel').checked,
+    ...(imagemUrl !== undefined && { imagemUrl }),
+  }
+
+  const btn = document.getElementById('salvarProduto')
+  btn.disabled = true
+  btn.textContent = 'Salvando...'
+
+  try {
+    if (editandoId) {
+      await apiFetch(API_PRODUTOS + `/atualizar/${editandoId}`, { method: 'PUT', body: JSON.stringify(dados) })
+      mostrarToast('Produto atualizado')
+    } else {
+      await apiFetch(API_PRODUTOS + '/cadastrar', { method: 'POST', body: JSON.stringify(dados) })
+      mostrarToast('Produto adicionado ao cardápio')
+    }
+    fecharDrawer()
+    renderGrid()
+  } catch (e) {
+    mostrarToast('Erro ao salvar: ' + e.message)
+  } finally {
+    btn.disabled = false
+    btn.textContent = 'Salvar produto'
+  }
+}
 
 /* ---------- TOAST ---------- */
-let toastTimeout;
-function mostrarToast(msg){
-  const toast = document.getElementById("toast");
-  toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>'+msg+'</span>';
-  toast.classList.add("mostrar");
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => toast.classList.remove("mostrar"), 2400);
+let toastTimeout
+function mostrarToast(msg) {
+  const toast = document.getElementById('toast')
+  toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>' + msg + '</span>'
+  toast.classList.add('mostrar')
+  clearTimeout(toastTimeout)
+  toastTimeout = setTimeout(() => toast.classList.remove('mostrar'), 2400)
 }
 
 /* ---------- INIT ---------- */
-renderTudo();
+carregarCategorias()
+renderGrid()
 </script>
 
 </body>

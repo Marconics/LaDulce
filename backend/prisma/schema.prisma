@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Usuario {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  email     String    @unique
+  senha     String
+  telefone  String?
+  role      Role      @default(CLIENTE)
+  criadoEm DateTime  @default(now())
+
+  enderecos Endereco[]
+  pedidos   Pedido[]
+}
+
+enum Role {
+  CLIENTE
+  ADMIN
+}
+
+model Endereco {
+  id        Int      @id @default(autoincrement())
+  rua       String
+  numero    String
+  bairro    String
+  cidade    String
+  estado    String
+  cep       String
+  usuarioId Int
+
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  pedidos   Pedido[]
+}
+
+model Categoria {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  descricao String?
+
+  produtos  Produto[]
+}
+
+model Produto {
+  id          Int        @id @default(autoincrement())
+  nome        String
+  descricao   String?
+  preco       Decimal    @db.Decimal(10, 2)
+  imagemUrl   String?
+  disponivel  Boolean    @default(true)
+  categoriaId Int
+
+  categoria   Categoria    @relation(fields: [categoriaId], references: [id])
+  itensPedido ItemPedido[]
+}
+
+model Pedido {
+  id         Int          @id @default(autoincrement())
+  status     StatusPedido @default(AGUARDANDO)
+  tipo       TipoPedido
+  total      Decimal      @db.Decimal(10, 2)
+  criadoEm  DateTime     @default(now())
+  usuarioId  Int
+  enderecoId Int?
+
+  usuario    Usuario      @relation(fields: [usuarioId], references: [id])
+  endereco   Endereco?    @relation(fields: [enderecoId], references: [id])
+  itens      ItemPedido[]
+  pagamento  Pagamento?
+  entrega    Entrega?
+}
+
+enum StatusPedido {
+  AGUARDANDO
+  EM_PREPARO
+  PRONTO
+  ENTREGUE
+  CANCELADO
+}
+
+enum TipoPedido {
+  ENTREGA
+  PRESENCIAL
+}
+
+model ItemPedido {
+  id            Int     @id @default(autoincrement())
+  quantidade    Int
+  precoUnitario Decimal @db.Decimal(10, 2)
+  pedidoId      Int
+  produtoId     Int
+
+  pedido  Pedido  @relation(fields: [pedidoId], references: [id])
+  produto Produto @relation(fields: [produtoId], references: [id])
+}
+
+model Pagamento {
+  id       Int            @id @default(autoincrement())
+  forma    FormaPagamento
+  status   StatusPagamento @default(PENDENTE)
+  valor    Decimal        @db.Decimal(10, 2)
+  pedidoId Int            @unique
+
+  pedido   Pedido         @relation(fields: [pedidoId], references: [id])
+}
+
+enum FormaPagamento {
+  PIX
+  CARTAO
+  DINHEIRO
+}
+
+enum StatusPagamento {
+  PENDENTE
+  PAGO
+  RECUSADO
+  ESTORNADO
+}
+
+model Entrega {
+  id        Int           @id @default(autoincrement())
+  status    StatusEntrega @default(AGUARDANDO)
+  previsao  DateTime?
+  pedidoId  Int           @unique
+
+  pedido    Pedido        @relation(fields: [pedidoId], references: [id])
+}
+
+enum StatusEntrega {
+  AGUARDANDO
+  SAIU_PARA_ENTREGA
+  ENTREGUE
+}
+
+// prisma/schema.prisma
