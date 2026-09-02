@@ -88,7 +88,7 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-tijolo btn-full">Criar conta</button>
+        <button type="submit" class="btn btn-tijolo btn-full" id="btnCriar">Criar conta</button>
       </form>
 
       <p class="auth-rodape">Já tem conta? <a href="login.html">Entrar</a></p>
@@ -99,32 +99,99 @@
 <div class="toast" id="toast"></div>
 
 <script>
-document.querySelectorAll(".toggle-senha").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const alvo = document.getElementById(btn.dataset.alvo);
-    alvo.type = alvo.type === "password" ? "text" : "password";
-  });
-});
+const API = 'http://localhost:3333/auth'
 
-let toastTimeout;
-function mostrarToast(msg){
-  const toast = document.getElementById("toast");
-  toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>'+msg+'</span>';
-  toast.classList.add("mostrar");
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => toast.classList.remove("mostrar"), 2400);
+/* ---------- REDIRECIONAR SE JÁ LOGADO ---------- */
+if (localStorage.getItem('token')) {
+  window.location.href = 'index.html'
 }
 
-document.getElementById("formCadastro").addEventListener("submit", e => {
-  e.preventDefault();
-  const senha = document.getElementById("cSenhaCad").value;
-  const confirmar = document.getElementById("cConfirmarCad").value;
-  if(senha !== confirmar){
-    mostrarToast("As senhas não coincidem");
-    return;
+/* ---------- TOGGLE SENHA ---------- */
+document.querySelectorAll('.toggle-senha').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const alvo = document.getElementById(btn.dataset.alvo)
+    alvo.type = alvo.type === 'password' ? 'text' : 'password'
+  })
+})
+
+/* ---------- TOAST ---------- */
+let toastTimeout
+function mostrarToast(msg) {
+  const toast = document.getElementById('toast')
+  toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>' + msg + '</span>'
+  toast.classList.add('mostrar')
+  clearTimeout(toastTimeout)
+  toastTimeout = setTimeout(() => toast.classList.remove('mostrar'), 2400)
+}
+
+/* ---------- CADASTRO ---------- */
+document.getElementById('formCadastro').addEventListener('submit', async e => {
+  e.preventDefault()
+
+  const senha     = document.getElementById('cSenhaCad').value
+  const confirmar = document.getElementById('cConfirmarCad').value
+
+  if (senha !== confirmar) {
+    mostrarToast('As senhas não coincidem')
+    return
   }
-  mostrarToast("Cadastro simulado — sem backend conectado ainda");
-});
+
+  const btn = document.getElementById('btnCriar')
+  btn.disabled    = true
+  btn.textContent = 'Criando conta...'
+
+  const dados = {
+    nome:     document.getElementById('cNomeCad').value.trim(),
+    email:    document.getElementById('cEmailCad').value.trim(),
+    telefone: document.getElementById('cTelefoneCad').value.trim(),
+    senha,
+  }
+
+  try {
+    // 1. Registra o usuário
+    const resReg = await fetch(API + '/registrar', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(dados)
+    })
+
+    const dataReg = await resReg.json()
+
+    if (!resReg.ok) {
+      mostrarToast(dataReg.mensagem || 'Erro ao criar conta')
+      return
+    }
+
+    // 2. Já faz login automático
+    const resLogin = await fetch(API + '/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email: dados.email, senha: dados.senha })
+    })
+
+    const dataLogin = await resLogin.json()
+
+    if (!resLogin.ok) {
+      // Cadastro funcionou mas login falhou — manda pro login manual
+      mostrarToast('Conta criada! Faça login para continuar.')
+      setTimeout(() => window.location.href = 'login.html', 1500)
+      return
+    }
+
+    // Salva token e dados do usuário
+    localStorage.setItem('token',   dataLogin.token)
+    localStorage.setItem('usuario', JSON.stringify(dataLogin.usuario))
+
+    mostrarToast('Conta criada! Bem-vindo, ' + dataLogin.usuario.nome.split(' ')[0] + '!')
+    setTimeout(() => window.location.href = 'index.html', 1000)
+
+  } catch (err) {
+    mostrarToast('Erro ao conectar com o servidor')
+  } finally {
+    btn.disabled    = false
+    btn.textContent = 'Criar conta'
+  }
+})
 </script>
 
 </body>

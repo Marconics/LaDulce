@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu perfil — LaDulce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="perfil.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <div class="logo-text">
+        <span class="nome" style="color:var(--creme);font-family:'Fraunces',serif;font-weight:700;font-size:21px;">LaDulce</span>
+      </div>
+    </a>
+    <nav class="categorias">
+      <a href="index.html" style="color:var(--creme);opacity:.85;font-size:15px;">← Voltar ao cardápio</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="btnSairTopo" aria-label="Sair da conta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="perfil-faixa">
+  <div class="container">
+    <div class="perfil-avatar" id="perfilAvatar">—</div>
+    <div>
+      <span class="tag-role oculta" id="tagAdmin">Admin</span>
+      <h1 id="perfilNome">Carregando…</h1>
+      <div class="perfil-meta">
+        <span id="perfilEmail"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="container">
+
+  <div class="perfil-tabs-mobile" id="tabsMobile">
+    <button class="chip ativo" data-painel="dados">Meus dados</button>
+    <button class="chip" data-painel="enderecos">Endereços</button>
+    <button class="chip" data-painel="pedidos">Pedidos</button>
+  </div>
+
+  <div class="perfil-layout">
+    <nav class="perfil-nav" id="perfilNav">
+      <button class="ativo" data-painel="dados">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+        Meus dados
+      </button>
+      <button data-painel="enderecos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-6-5.2-6-10a6 6 0 0112 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="11" r="2.3"/></svg>
+        Endereços
+      </button>
+      <button data-painel="pedidos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M4 8l2-4h12l2 4"/><path d="M12 8v12"/></svg>
+        Meus pedidos
+      </button>
+      <hr>
+      <button class="sair" id="btnSairLateral">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Sair da conta
+      </button>
+    </nav>
+
+    <div class="perfil-conteudo">
+
+      <!-- ===== MEUS DADOS ===== -->
+      <section class="perfil-painel ativo" data-painel="dados">
+        <div class="perfil-bloco">
+          <div class="perfil-bloco-topo">
+            <div>
+              <h2>Dados pessoais</h2>
+              <p>Mantenha suas informações sempre atualizadas.</p>
+            </div>
+          </div>
+          <form class="form-dados" id="formDados">
+            <div class="campo"><label for="fNome">Nome completo</label><input id="fNome" type="text" required></div>
+            <div class="campo"><label for="fEmail">E-mail</label><input id="fEmail" type="email" required></div>
+            <div class="campo"><label for="fTelefone">Telefone</label><input id="fTelefone" type="tel" placeholder="(11) 90000-0000"></div>
+            <div class="form-acoes">
+              <button type="submit" class="btn btn-mostarda" id="btnSalvarDados">Salvar alterações</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="perfil-bloco">
+          <div class="perfil-bloco-topo">
+            <div>
+              <h2>Alterar senha</h2>
+              <p>Recomendamos uma senha com pelo menos 6 caracteres.</p>
+            </div>
+          </div>
+          <form class="form-dados" id="formSenha">
+            <div class="campo"><label for="sAtual">Senha atual</label><input id="sAtual" type="password" required></div>
+            <div class="campo"><label for="sNova">Nova senha</label><input id="sNova" type="password" required minlength="6"></div>
+            <div class="campo"><label for="sConfirma">Confirmar nova senha</label><input id="sConfirma" type="password" required minlength="6"></div>
+            <div class="form-acoes">
+              <button type="submit" class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);" id="btnSalvarSenha">Atualizar senha</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===== ENDEREÇOS ===== -->
+      <section class="perfil-painel" data-painel="enderecos">
+        <div class="perfil-bloco">
+          <div class="perfil-bloco-topo">
+            <div>
+              <h2>Meus endereços</h2>
+              <p>Usados na hora de finalizar um pedido para entrega.</p>
+            </div>
+          </div>
+
+          <form class="form-dados" id="formEndereco" style="display:none;max-width:100%;margin-bottom:22px;padding:18px;border:1px dashed var(--linha);border-radius:12px;background:var(--papel);">
+            <input type="hidden" id="eId">
+            <div class="linha-campos">
+              <div class="campo"><label for="eRua">Rua</label><input id="eRua" type="text" required></div>
+              <div class="campo"><label for="eNumero">Número</label><input id="eNumero" type="text" required></div>
+            </div>
+            <div class="linha-campos">
+              <div class="campo"><label for="eBairro">Bairro</label><input id="eBairro" type="text" required></div>
+              <div class="campo"><label for="eCep">CEP</label><input id="eCep" type="text" required></div>
+            </div>
+            <div class="linha-campos">
+              <div class="campo"><label for="eCidade">Cidade</label><input id="eCidade" type="text" required></div>
+              <div class="campo"><label for="eEstado">Estado</label><input id="eEstado" type="text" maxlength="2" placeholder="SP" required></div>
+            </div>
+            <div class="form-acoes">
+              <button type="button" class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);" id="cancelarEndereco">Cancelar</button>
+              <button type="submit" class="btn btn-mostarda" id="salvarEnderecoBtn">Salvar endereço</button>
+            </div>
+          </form>
+
+          <div class="enderecos-grid" id="enderecosGrid"></div>
+        </div>
+      </section>
+
+      <!-- ===== PEDIDOS ===== -->
+      <section class="perfil-painel" data-painel="pedidos">
+        <div class="perfil-bloco">
+          <div class="perfil-bloco-topo">
+            <div>
+              <h2>Meus pedidos</h2>
+              <p>Acompanhe o status e o histórico das suas compras.</p>
+            </div>
+          </div>
+          <div class="pedidos-lista" id="pedidosLista"></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container footer-grid">
+    <div>
+      <h4>LaDulce - Artigos de festa</h4>
+      <p>Os itens que você precisa para sua festa, em um só lugar.</p>
+    </div>
+    <div>
+      <h4>Atendimento</h4>
+      <ul>
+        <li><a href="index.html">Voltar ao cardápio</a></li>
+        <li><a href="#">Fale com a gente</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Horário de Atendimento</h4>
+      <ul>
+        <li>Terça a domingo</li>
+        <li>11h às 21h</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-baixo container">© 2026 LaDulce — site de demonstração, sem processamento real de pagamentos.</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:3333'
+const fmt     = v  => "R$ " + Number(v).toFixed(2).replace(".", ",")
+const fmtData = iso => iso ? new Date(iso).toLocaleDateString('pt-BR') : '—'
+
+/* ---------- SESSÃO ---------- */
+const token = localStorage.getItem('token')
+let usuarioLocal = (() => { try { const u = localStorage.getItem('usuario'); return u && u !== 'undefined' ? JSON.parse(u) : null } catch { return null } })()
+
+if (!token || !usuarioLocal) window.location.href = 'login.html'
+
+function headers() {
+  return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+}
+
+/* ---------- TOAST ---------- */
+let toastTimeout
+function mostrarToast(msg) {
+  const toast = document.getElementById('toast')
+  toast.innerHTML = '<span>' + msg + '</span>'
+  toast.classList.add('mostrar')
+  clearTimeout(toastTimeout)
+  toastTimeout = setTimeout(() => toast.classList.remove('mostrar'), 2400)
+}
+
+/* ---------- NAVEGAÇÃO ---------- */
+function mostrarPainel(nome) {
+  document.querySelectorAll('.perfil-painel').forEach(p => p.classList.toggle('ativo', p.dataset.painel === nome))
+  document.querySelectorAll('#perfilNav button[data-painel]').forEach(b => b.classList.toggle('ativo', b.dataset.painel === nome))
+  document.querySelectorAll('#tabsMobile button').forEach(b => b.classList.toggle('ativo', b.dataset.painel === nome))
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+document.querySelectorAll('#perfilNav button[data-painel], #tabsMobile button[data-painel]').forEach(b => {
+  b.onclick = () => mostrarPainel(b.dataset.painel)
+})
+
+function sair() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('usuario')
+  window.location.href = 'login.html'
+}
+document.getElementById('btnSairTopo').onclick    = sair
+document.getElementById('btnSairLateral').onclick = sair
+
+/* ---------- DADOS DO USUÁRIO ---------- */
+function renderUsuario(u) {
+  document.getElementById('perfilAvatar').textContent = (u.nome || '?').trim().charAt(0).toUpperCase()
+  document.getElementById('perfilNome').textContent   = u.nome
+  document.getElementById('perfilEmail').textContent  = u.email
+  document.getElementById('tagAdmin').classList.toggle('oculta', u.role !== 'ADMIN')
+  document.getElementById('fNome').value     = u.nome     || ''
+  document.getElementById('fEmail').value    = u.email    || ''
+  document.getElementById('fTelefone').value = u.telefone || ''
+}
+
+async function carregarUsuario() {
+  try {
+    const res  = await fetch(API + '/usuarios/perfil', { headers: headers() })
+    const data = await res.json()
+    if (!res.ok) { sair(); return }
+    renderUsuario(data.usuario)
+    // Atualiza o localStorage com dados frescos do banco
+    localStorage.setItem('usuario', JSON.stringify({ ...usuarioLocal, ...data.usuario }))
+  } catch (e) {
+    console.error('Erro ao carregar perfil:', e)
+    // Fallback: usa o que veio do login
+    renderUsuario(usuarioLocal)
+  }
+}
+
+document.getElementById('formDados').onsubmit = async (ev) => {
+  ev.preventDefault()
+  const btn = document.getElementById('btnSalvarDados')
+  btn.disabled = true
+  btn.textContent = 'Salvando…'
+
+  const body = {
+    nome:     document.getElementById('fNome').value.trim(),
+    email:    document.getElementById('fEmail').value.trim(),
+    telefone: document.getElementById('fTelefone').value.trim() || null
+  }
+
+  try {
+    const res  = await fetch(API + '/usuarios/atualizar', { method: 'PUT', headers: headers(), body: JSON.stringify(body) })
+    const data = await res.json()
+    if (!res.ok) { mostrarToast(data.mensagem ?? 'Erro ao salvar'); return }
+    localStorage.setItem('usuario', JSON.stringify({ ...usuarioLocal, ...data.usuario }))
+    usuarioLocal = { ...usuarioLocal, ...data.usuario }
+    renderUsuario(data.usuario)
+    mostrarToast('Dados atualizados com sucesso!')
+  } catch (e) {
+    mostrarToast('Erro de conexão. Tente novamente.')
+  } finally {
+    btn.disabled    = false
+    btn.textContent = 'Salvar alterações'
+  }
+}
+
+document.getElementById('formSenha').onsubmit = async (ev) => {
+  ev.preventDefault()
+  const nova     = document.getElementById('sNova').value
+  const confirma = document.getElementById('sConfirma').value
+  if (nova !== confirma) { mostrarToast('As senhas novas não coincidem'); return }
+
+  const btn = document.getElementById('btnSalvarSenha')
+  btn.disabled    = true
+  btn.textContent = 'Salvando…'
+
+  try {
+    const res  = await fetch(API + '/usuarios/senha', {
+      method: 'PUT',
+      headers: headers(),
+      body: JSON.stringify({ senhaAtual: document.getElementById('sAtual').value, novaSenha: nova })
+    })
+    const data = await res.json()
+    if (!res.ok) { mostrarToast(data.mensagem ?? 'Erro ao atualizar senha'); return }
+    document.getElementById('formSenha').reset()
+    mostrarToast('Senha atualizada com sucesso!')
+  } catch (e) {
+    mostrarToast('Erro de conexão. Tente novamente.')
+  } finally {
+    btn.disabled    = false
+    btn.textContent = 'Atualizar senha'
+  }
+}
+
+/* ---------- ENDEREÇOS ---------- */
+let enderecos          = []
+let editandoEnderecoId = null
+
+async function carregarEnderecos() {
+  try {
+    const res  = await fetch(API + '/enderecos/listar', { headers: headers() })
+    const data = await res.json()
+    enderecos  = data.enderecos ?? []
+  } catch (e) {
+    enderecos = []
+  }
+  renderEnderecos()
+}
+
+function renderEnderecos() {
+  const grid = document.getElementById('enderecosGrid')
+  const cards = enderecos.map((e, i) => `
+    <div class="endereco-card ${i === 0 ? 'principal' : ''}">
+      ${i === 0 ? '<span class="selo-principal">Principal</span>' : ''}
+      <b>${e.rua}, ${e.numero}</b>
+      <span>${e.bairro} — ${e.cidade}/${e.estado}</span>
+      <span>CEP ${e.cep}</span>
+      <div class="endereco-acoes">
+        <button onclick="editarEndereco(${e.id})">Editar</button>
+        <button class="excluir" onclick="excluirEndereco(${e.id})">Excluir</button>
+      </div>
+    </div>`).join('')
+
+  grid.innerHTML = cards + `
+    <button type="button" class="endereco-novo-card" id="btnNovoEndereco">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Adicionar endereço
+    </button>`
+
+  document.getElementById('btnNovoEndereco').onclick = () => abrirFormEndereco(null)
+}
+
+function abrirFormEndereco(id) {
+  editandoEnderecoId = id
+  const form = document.getElementById('formEndereco')
+  if (id) {
+    const e = enderecos.find(x => x.id === id)
+    document.getElementById('eId').value     = e.id
+    document.getElementById('eRua').value    = e.rua
+    document.getElementById('eNumero').value = e.numero
+    document.getElementById('eBairro').value = e.bairro
+    document.getElementById('eCep').value    = e.cep
+    document.getElementById('eCidade').value = e.cidade
+    document.getElementById('eEstado').value = e.estado
+    document.getElementById('salvarEnderecoBtn').textContent = 'Salvar alterações'
+  } else {
+    document.getElementById('formEndereco').reset()
+    document.getElementById('salvarEnderecoBtn').textContent = 'Salvar endereço'
+  }
+  form.style.display = 'flex'
+  form.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+function editarEndereco(id) { abrirFormEndereco(id) }
+
+document.getElementById('cancelarEndereco').onclick = () => {
+  document.getElementById('formEndereco').style.display = 'none'
+  editandoEnderecoId = null
+}
+
+document.getElementById('formEndereco').onsubmit = async (ev) => {
+  ev.preventDefault()
+  const btn = document.getElementById('salvarEnderecoBtn')
+  btn.disabled    = true
+  btn.textContent = 'Salvando…'
+
+  const dados = {
+    rua:    document.getElementById('eRua').value.trim(),
+    numero: document.getElementById('eNumero').value.trim(),
+    bairro: document.getElementById('eBairro').value.trim(),
+    cep:    document.getElementById('eCep').value.trim(),
+    cidade: document.getElementById('eCidade').value.trim(),
+    estado: document.getElementById('eEstado').value.trim().toUpperCase()
+  }
+
+  try {
+    let res, data
+    if (editandoEnderecoId) {
+      res  = await fetch(API + '/enderecos/' + editandoEnderecoId, { method: 'PUT', headers: headers(), body: JSON.stringify(dados) })
+      data = await res.json()
+      if (!res.ok) { mostrarToast(data.mensagem ?? 'Erro ao atualizar'); return }
+      mostrarToast('Endereço atualizado!')
+    } else {
+      res  = await fetch(API + '/enderecos/criar', { method: 'POST', headers: headers(), body: JSON.stringify(dados) })
+      data = await res.json()
+      if (!res.ok) { mostrarToast(data.mensagem ?? 'Erro ao criar'); return }
+      mostrarToast('Endereço adicionado!')
+    }
+    document.getElementById('formEndereco').style.display = 'none'
+    editandoEnderecoId = null
+    await carregarEnderecos()
+  } catch (e) {
+    mostrarToast('Erro de conexão. Tente novamente.')
+  } finally {
+    btn.disabled    = false
+    btn.textContent = editandoEnderecoId ? 'Salvar alterações' : 'Salvar endereço'
+  }
+}
+
+async function excluirEndereco(id) {
+  if (!confirm('Remover este endereço?')) return
+  try {
+    const res  = await fetch(API + '/enderecos/' + id, { method: 'DELETE', headers: headers() })
+    const data = await res.json()
+    if (!res.ok) { mostrarToast(data.mensagem ?? 'Erro ao excluir'); return }
+    mostrarToast('Endereço removido.')
+    await carregarEnderecos()
+  } catch (e) {
+    mostrarToast('Erro de conexão. Tente novamente.')
+  }
+}
+
+/* ---------- PEDIDOS ---------- */
+const STATUS_LABEL   = { AGUARDANDO: 'Aguardando', EM_PREPARO: 'Em preparo', PRONTO: 'Pronto', ENTREGUE: 'Entregue', CANCELADO: 'Cancelado' }
+const PAGAMENTO_LABEL = { PIX: 'Pix', CARTAO: 'Cartão de crédito', DINHEIRO: 'Dinheiro' }
+
+async function carregarPedidos() {
+  const lista = document.getElementById('pedidosLista')
+  lista.innerHTML = '<p style="opacity:.5;padding:16px 0;">Carregando pedidos…</p>'
+  try {
+    const res  = await fetch(API + '/pedidos/listar', { headers: headers() })
+    const data = await res.json()
+    renderPedidos(data.pedidos ?? [])
+  } catch (e) {
+    lista.innerHTML = '<p style="color:red;padding:16px 0;">Erro ao carregar pedidos.</p>'
+  }
+}
+
+function renderPedidos(pedidos) {
+  const lista = document.getElementById('pedidosLista')
+  if (pedidos.length === 0) {
+    lista.innerHTML = `
+      <div class="pedidos-vazio">
+        <div class="prato-icone ic-principal" style="margin:0 auto;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M4 8l2-4h12l2 4"/><path d="M12 8v12"/></svg>
+        </div>
+        <h3 style="color:var(--tinta);margin-bottom:6px;">Você ainda não fez nenhum pedido</h3>
+        <p>Que tal dar uma olhada no cardápio?</p>
+      </div>`
+    return
+  }
+
+  lista.innerHTML = [...pedidos].reverse().map(p => {
+    const itensHtml = (p.itens || []).map(it => `
+      <div class="pedido-item-linha">
+        <span>${it.quantidade}x ${it.produto?.nome ?? '—'}</span>
+        <span>${fmt(Number(it.precoUnitario) * it.quantidade)}</span>
+      </div>`).join('')
+
+    const statusClasse = 'status-' + (p.status ?? '').toLowerCase()
+    const endTxt = p.endereco
+      ? `${p.endereco.rua}, ${p.endereco.numero} — ${p.endereco.bairro}`
+      : 'Retirada no local'
+
+    return `
+    <div class="pedido-card" id="pedido-${p.id}">
+      <div class="pedido-cabecalho" onclick="alternarPedido(${p.id})">
+        <div class="pedido-cabecalho-info">
+          <span class="pedido-id">Pedido #${String(p.id).padStart(6,'0')}</span>
+          <span class="pedido-data">${fmtData(p.criadoEm)} · ${p.tipo === 'ENTREGA' ? 'Entrega' : 'Retirada no local'}</span>
+        </div>
+        <div class="pedido-direita">
+          <span class="status-badge ${statusClasse}">${STATUS_LABEL[p.status] ?? p.status}</span>
+          <span class="pedido-total">${fmt(p.total)}</span>
+          <svg class="pedido-seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="pedido-detalhe">
+        ${itensHtml}
+        <div class="pedido-sub">
+          <span>Pagamento: <b>${PAGAMENTO_LABEL[p.pagamento?.forma] ?? '—'}</b></span>
+          <span>Entrega: <b>${endTxt}</b></span>
+        </div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function alternarPedido(id) {
+  document.getElementById('pedido-' + id).classList.toggle('aberto')
+}
+
+/* ---------- INIT ---------- */
+async function init() {
+  await carregarUsuario()
+  await carregarEnderecos()
+  await carregarPedidos()
+}
+
+init()
+</script>
+</body>
+</html>
