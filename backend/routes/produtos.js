@@ -3,11 +3,23 @@ import supabase from "../supabase.js";
 
 const prisma = new PrismaClient();
 
+// ✅ ADICIONADO — função de proteção admin
+const autenticarAdmin = async (request, reply) => {
+  try {
+    await request.jwtVerify()
+    if (request.user.role !== 'ADMIN') {
+      return reply.status(403).send({ mensagem: 'Apenas administradores podem realizar esta ação.' })
+    }
+  } catch {
+    return reply.status(401).send({ mensagem: 'Não autorizado.' })
+  }
+}
+
 export default async function RoutesProdutos(app) {
 
   // ----- Cadastrar -----
   // URL: POST /produtos/cadastrar
-  app.post('/cadastrar', async (request, reply) => {
+  app.post('/cadastrar', { preHandler: autenticarAdmin }, async (request, reply) => { // ✅ PROTEGIDO
 
     const { nome, descricao, preco, imagemUrl, disponivel, categoriaId } = request.body
 
@@ -103,7 +115,7 @@ export default async function RoutesProdutos(app) {
 
   // ----- Atualizar -----
   // URL: PUT /produtos/atualizar/:id
-  app.put('/atualizar/:id', async (request, reply) => {
+  app.put('/atualizar/:id', { preHandler: autenticarAdmin }, async (request, reply) => { // ✅ PROTEGIDO
     try {
 
       const { id } = request.params
@@ -120,7 +132,6 @@ export default async function RoutesProdutos(app) {
       let fotoUrl = produtoExistente.imagemUrl
 
       if (imagemUrl === null) {
-        // Remover foto
         if (produtoExistente.imagemUrl) {
           const nomeArquivo = produtoExistente.imagemUrl.split('/').pop().split('?')[0]
           await supabase.storage.from('fotos-produtos').remove([nomeArquivo])
@@ -128,7 +139,6 @@ export default async function RoutesProdutos(app) {
         fotoUrl = null
 
       } else if (imagemUrl && !imagemUrl.startsWith('http')) {
-        // Nova foto em base64 — apaga a anterior e sobe a nova
         if (produtoExistente.imagemUrl) {
           const nomeAntigo = produtoExistente.imagemUrl.split('/').pop().split('?')[0]
           await supabase.storage.from('fotos-produtos').remove([nomeAntigo])
@@ -184,7 +194,7 @@ export default async function RoutesProdutos(app) {
 
   // ----- Excluir -----
   // URL: DELETE /produtos/excluir/:id
-  app.delete('/excluir/:id', async (request, reply) => {
+  app.delete('/excluir/:id', { preHandler: autenticarAdmin }, async (request, reply) => { // ✅ PROTEGIDO
 
     const { id } = request.params
 
