@@ -15,7 +15,7 @@ import RoutesCheckout from './routes/checkout.js'
 const server = Fastify({ logger: true })
 
 await server.register(cors, {
-  origin: '*',
+  origin: ['https://marconics.github.io', 'http://localhost:3333'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 })
 
