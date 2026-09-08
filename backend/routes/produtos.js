@@ -19,7 +19,7 @@ export default async function RoutesProdutos(app) {
 
   // ----- Cadastrar -----
   // URL: POST /produtos/cadastrar
-  app.post('/cadastrar', { preHandler: autenticarAdmin }, async (request, reply) => { // ✅ PROTEGIDO
+  app.post('/cadastrar', { preHandler: autenticarAdmin }, async (request, reply) => {
 
     const { nome, descricao, preco, imagemUrl, disponivel, categoriaId } = request.body
 

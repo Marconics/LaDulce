@@ -156,19 +156,31 @@
       <h3>Endereço de entrega</h3>
       <p class="sub">Para onde vamos levar sua festa?</p>
 
-      <!-- seletor de endereços salvos (preenchido via JS se o usuário tiver endereços) -->
       <div id="enderecoSalvoWrap" style="display:none;"></div>
 
       <div class="campo"><label for="cNome">Nome completo</label><input id="cNome" type="text" placeholder="Como podemos te chamar"></div>
       <div class="linha-campos">
         <div class="campo"><label for="cTelefone">Telefone</label><input id="cTelefone" type="tel" placeholder="(11) 90000-0000"></div>
-        <div class="campo"><label for="cCep">CEP</label><input id="cCep" type="text" placeholder="00000-000"></div>
+
+        <!-- CEP: ao sair do campo (blur), busca automaticamente na ViaCEP -->
+        <div class="campo">
+          <label for="cCep">CEP</label>
+          <input id="cCep" type="text" placeholder="00000-000" maxlength="9">
+          <small id="cepStatus" style="color:gray;font-size:0.75rem;"></small>
+        </div>
       </div>
       <div class="campo"><label for="cEndereco">Endereço</label><input id="cEndereco" type="text" placeholder="Rua, número"></div>
       <div class="linha-campos">
         <div class="campo"><label for="cBairro">Bairro</label><input id="cBairro" type="text" placeholder="Seu bairro"></div>
         <div class="campo"><label for="cComplemento">Complemento</label><input id="cComplemento" type="text" placeholder="Apto, bloco (opcional)"></div>
       </div>
+
+      <!-- Frete calculado automaticamente após buscar o CEP -->
+      <div id="freteInfo" style="display:none;" class="resumo-card">
+        <div class="resumo-item"><span>Taxa de entrega</span><span id="freteValor">—</span></div>
+        <div class="resumo-item"><span>Prazo estimado</span><span id="fretePrazo">—</span></div>
+      </div>
+
       <div class="acoes-passo">
         <button class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);" id="voltarPasso1">Voltar</button>
         <button class="btn btn-tijolo" id="irPasso3">Continuar</button>
@@ -249,25 +261,30 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ─── CONFIGURAÇÃO ────────────────────────────────────────────────────────────
 const API            = 'http://localhost:3333'
 const API_PRODUTOS   = API + '/produtos'
 const API_CATEGORIAS = API + '/categorias'
 const API_PEDIDOS    = API + '/pedidos'
 const API_ENDERECOS  = API + '/enderecos'
+const API_CARRINHO   = API + '/carrinho'   // ✅ NOVO — rota do carrinho persistido
+const API_CHECKOUT   = API + '/checkout'   // ✅ NOVO — rota de frete/webhook
+
 const TAXA_ENTREGA   = 6.90
 const fmt = v => "R$ " + Number(v).toFixed(2).replace(".", ",")
 
-/* ---------- ESTADO ---------- */
+// ─── ESTADO ──────────────────────────────────────────────────────────────────
 let produtos        = []
 let categorias      = []
-let carrinho        = {}
+let carrinho        = {}   // carrinho em memória: { [produtoId]: { qtd: 2 } }
 let favoritos       = new Set()
 let categoriaAtual  = 'todos'
 let vendoFavoritos  = false
 let metodoPagamento = null
 let enderecosSalvos = []
+let taxaEntregaReal = TAXA_ENTREGA  // ✅ NOVO — atualizada pelo cálculo de frete
 
-/* ---------- SESSÃO ---------- */
+// ─── SESSÃO ──────────────────────────────────────────────────────────────────
 function getToken()   { return localStorage.getItem('token') }
 function getUsuario() { const u = localStorage.getItem('usuario'); return u ? JSON.parse(u) : null }
 
@@ -282,7 +299,125 @@ function aplicarEstadoConta() {
   }
 }
 
-/* ---------- API ---------- */
+// ─── CARRINHO BACKEND ────────────────────────────────────────────────────────
+// ✅ NOVO — Sincroniza o carrinho em memória com o banco de dados.
+// Chamado no init() se o usuário estiver logado.
+// Isso garante que o carrinho persiste mesmo se o usuário fechar o navegador.
+async function carregarCarrinhoDoBackend() {
+  if (!getToken()) return  // sem login, usa só o carrinho em memória
+
+  try {
+    const res  = await fetch(API_CARRINHO, {
+      headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+    const data = await res.json()
+
+    // Converte o formato do backend { itens: [{produtoId, quantidade}] }
+    // para o formato em memória { [produtoId]: { qtd: N } }
+    if (data.carrinho?.itens?.length > 0) {
+      data.carrinho.itens.forEach(item => {
+        carrinho[item.produtoId] = { qtd: item.quantidade }
+      })
+    }
+  } catch (e) {
+    console.error('Erro ao carregar carrinho do backend:', e)
+    // Se falhar, continua com o carrinho em memória (vazio)
+  }
+}
+
+// ✅ NOVO — Envia a adição de um item para o backend (se logado)
+async function sincronizarAdicaoBackend(produtoId, quantidade = 1) {
+  if (!getToken()) return  // sem login, só usa memória
+
+  try {
+    await fetch(API_CARRINHO + '/itens', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + getToken()
+      },
+      body: JSON.stringify({ produtoId, quantidade })
+    })
+  } catch (e) {
+    console.error('Erro ao sincronizar adição com backend:', e)
+  }
+}
+
+// ✅ NOVO — Envia a alteração de quantidade para o backend (se logado)
+async function sincronizarQuantidadeBackend(produtoId, quantidade) {
+  if (!getToken()) return
+
+  try {
+    if (quantidade <= 0) {
+      // Quantidade zero = remover item
+      await fetch(API_CARRINHO + '/itens/' + produtoId, {
+        method:  'DELETE',
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+      })
+    } else {
+      // Atualiza a quantidade
+      await fetch(API_CARRINHO + '/itens/' + produtoId, {
+        method:  'PUT',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': 'Bearer ' + getToken()
+        },
+        body: JSON.stringify({ quantidade })
+      })
+    }
+  } catch (e) {
+    console.error('Erro ao sincronizar quantidade com backend:', e)
+  }
+}
+
+// ─── CEP / FRETE ─────────────────────────────────────────────────────────────
+// ✅ NOVO — Busca o CEP no backend, que consulta a ViaCEP e calcula o frete.
+//
+// Como funciona na prática:
+//   Usuário digita o CEP → frontend envia para /checkout/frete
+//   → backend consulta viacep.com.br gratuitamente
+//   → backend calcula o frete pela tabela de estados
+//   → frontend preenche os campos automaticamente
+//
+async function buscarCep(cep) {
+  const cepLimpo = cep.replace(/\D/g, '')
+  if (cepLimpo.length !== 8) return
+
+  const status = document.getElementById('cepStatus')
+  status.textContent = 'Buscando CEP...'
+
+  try {
+    const res  = await fetch(API_CHECKOUT + '/frete', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cep: cepLimpo })
+    })
+    const data = await res.json()
+
+    if (!res.ok) {
+      status.textContent = 'CEP não encontrado.'
+      return
+    }
+
+    // Preenche os campos automaticamente com os dados retornados
+    const end = data.endereco
+    document.getElementById('cEndereco').value = end.logradouro ?? ''
+    document.getElementById('cBairro').value   = end.bairro     ?? ''
+    status.textContent = `${end.cidade} - ${end.estado}`
+
+    // Atualiza e exibe o card de frete calculado
+    taxaEntregaReal = data.frete.valor
+    document.getElementById('freteValor').textContent = fmt(data.frete.valor)
+    document.getElementById('fretePrazo').textContent = data.frete.prazo
+    document.getElementById('freteInfo').style.display = 'block'
+
+  } catch (e) {
+    status.textContent = 'Erro ao buscar CEP.'
+    console.error('Erro ao buscar CEP:', e)
+  }
+}
+
+// ─── API — PRODUTOS E CATEGORIAS ─────────────────────────────────────────────
 async function carregarCategorias() {
   try {
     const res  = await fetch(API_CATEGORIAS + '/listar')
@@ -323,7 +458,7 @@ async function carregarEnderecosSalvos() {
   }
 }
 
-/* ---------- FILTROS DINÂMICOS ---------- */
+// ─── FILTROS DINÂMICOS ────────────────────────────────────────────────────────
 function renderFiltros() {
   const chips = document.getElementById('filtrosChips')
   const nav   = document.getElementById('navCategorias')
@@ -348,7 +483,7 @@ function renderFiltros() {
   })
 }
 
-/* ---------- ÍCONES SVG ---------- */
+// ─── ÍCONES SVG ──────────────────────────────────────────────────────────────
 function svgPrato(icone) {
   const paths = {
     principal: '<path d="M4 12a8 8 0 0016 0"/><path d="M2 12h20"/><path d="M12 4v3"/>',
@@ -368,7 +503,7 @@ function iconeCoracao(preenchido) {
   return `<svg viewBox="0 0 24 24" fill="${preenchido ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8 2 4.5 5.6 4c2-.3 3.8.7 4.9 2.3C11.6 4.7 13.4 3.7 15.4 4c3.6.5 5.2 4 3.6 7.7C16.5 16.4 12 21 12 21z"/></svg>`
 }
 
-/* ---------- RENDER PRODUTOS ---------- */
+// ─── RENDER PRODUTOS ─────────────────────────────────────────────────────────
 function renderProdutos() {
   const grid = document.getElementById('gridProdutos')
   let lista  = produtos
@@ -423,7 +558,7 @@ function renderProdutos() {
   }).join('')
 }
 
-/* ---------- FAVORITOS ---------- */
+// ─── FAVORITOS ────────────────────────────────────────────────────────────────
 function alternarFavorito(id) {
   if (favoritos.has(id)) { favoritos.delete(id) }
   else { favoritos.add(id); mostrarToast('Adicionado aos favoritos', 'coracao') }
@@ -431,7 +566,7 @@ function alternarFavorito(id) {
   renderProdutos()
 }
 
-/* ---------- CARRINHO ---------- */
+// ─── CARRINHO ────────────────────────────────────────────────────────────────
 function adicionarCarrinho(id) {
   const p = produtos.find(x => x.id === id)
   if (!carrinho[id]) carrinho[id] = { qtd: 0 }
@@ -440,21 +575,30 @@ function adicionarCarrinho(id) {
   atualizarBadges()
   renderProdutos()
   renderDrawer()
+  sincronizarAdicaoBackend(id)  // ✅ NOVO — sincroniza com o banco em segundo plano
 }
+
 function alterarQtd(id, delta) {
   if (!carrinho[id]) return
   carrinho[id].qtd += delta
-  if (carrinho[id].qtd <= 0) delete carrinho[id]
+  const novaQtd = carrinho[id].qtd
+
+  if (novaQtd <= 0) delete carrinho[id]
+
   atualizarBadges()
   renderProdutos()
   renderDrawer()
+  sincronizarQuantidadeBackend(id, novaQtd)  // ✅ NOVO — sincroniza com o banco
 }
+
 function removerItem(id) {
   delete carrinho[id]
   atualizarBadges()
   renderProdutos()
   renderDrawer()
+  sincronizarQuantidadeBackend(id, 0)  // ✅ NOVO — 0 = deletar no backend
 }
+
 function totalCarrinho() {
   return Object.entries(carrinho).reduce((soma, [id, item]) => {
     const p = produtos.find(x => x.id == id)
@@ -472,11 +616,12 @@ function atualizarBadges() {
   bC.textContent = qtdC; bC.classList.toggle('oculta', qtdC === 0)
   bF.textContent = qtdF; bF.classList.toggle('oculta', qtdF === 0)
   const subtotal = totalCarrinho()
-  const total    = qtdC > 0 ? subtotal + TAXA_ENTREGA : 0
+  const total    = qtdC > 0 ? subtotal + taxaEntregaReal : 0  // ✅ usa taxa real do frete
   document.getElementById('ffQtd').textContent   = qtdC + (qtdC === 1 ? ' item' : ' itens')
   document.getElementById('ffTotal').textContent = fmt(total)
   document.getElementById('carrinhoFlutuante').style.display = qtdC > 0 ? 'flex' : 'none'
 }
+
 function renderDrawer() {
   const body     = document.getElementById('drawerBody')
   const entradas = Object.entries(carrinho)
@@ -505,7 +650,7 @@ function renderDrawer() {
     }).join('')
   }
   const subtotal = totalCarrinho()
-  const entrega  = subtotal > 0 ? TAXA_ENTREGA : 0
+  const entrega  = subtotal > 0 ? taxaEntregaReal : 0  // ✅ usa taxa real do frete
   document.getElementById('dSubtotal').textContent = fmt(subtotal)
   document.getElementById('dEntrega').textContent  = fmt(entrega)
   document.getElementById('dTotal').textContent    = fmt(subtotal + entrega)
@@ -513,7 +658,7 @@ function renderDrawer() {
   document.getElementById('btnFinalizar').style.opacity = entradas.length === 0 ? 0.5 : 1
 }
 
-/* ---------- DRAWER ---------- */
+// ─── DRAWER ──────────────────────────────────────────────────────────────────
 const overlay = document.getElementById('overlay')
 const drawer  = document.getElementById('drawerCarrinho')
 function abrirDrawer()    { renderDrawer(); overlay.classList.add('aberto'); drawer.classList.add('aberto') }
@@ -523,7 +668,7 @@ document.getElementById('carrinhoFlutuante').onclick = abrirDrawer
 document.getElementById('fecharDrawer').onclick      = fecharDrawerFn
 overlay.onclick = () => { fecharDrawerFn(); fecharCheckoutFn() }
 
-/* ---------- FAVORITOS NAV ---------- */
+// ─── FAVORITOS NAV ───────────────────────────────────────────────────────────
 document.getElementById('btnFavoritos').onclick = () => {
   vendoFavoritos = true
   document.querySelectorAll('.chip, nav.categorias button').forEach(b => b.classList.remove('ativo'))
@@ -531,7 +676,7 @@ document.getElementById('btnFavoritos').onclick = () => {
   document.getElementById('cardapio').scrollIntoView({ behavior: 'smooth' })
 }
 
-/* ---------- FILTROS ---------- */
+// ─── FILTROS ─────────────────────────────────────────────────────────────────
 function definirCategoria(cat) {
   categoriaAtual = cat
   vendoFavoritos = false
@@ -543,7 +688,7 @@ document.getElementById('btnComoFunciona').onclick = () => {
   mostrarToast('Escolha os produtos, monte a sacola e finalize com Pix, cartão ou dinheiro', 'sacola')
 }
 
-/* ---------- TOAST ---------- */
+// ─── TOAST ───────────────────────────────────────────────────────────────────
 let toastTimeout
 function mostrarToast(msg, icone) {
   const toast = document.getElementById('toast')
@@ -554,13 +699,12 @@ function mostrarToast(msg, icone) {
   toastTimeout = setTimeout(() => toast.classList.remove('mostrar'), 2400)
 }
 
-/* ---------- CHECKOUT ---------- */
+// ─── CHECKOUT ────────────────────────────────────────────────────────────────
 const checkoutOverlay = document.getElementById('checkoutOverlay')
 
 function abrirCheckout() {
   if (qtdCarrinho() === 0) return
 
-  // Exige login para finalizar
   if (!getToken()) {
     fecharDrawerFn()
     mostrarToast('Entre na sua conta para finalizar o pedido', 'sacola')
@@ -604,11 +748,11 @@ function renderRevisao() {
   }).join('')
   const subtotal = totalCarrinho()
   document.getElementById('r1Subtotal').textContent = fmt(subtotal)
-  document.getElementById('r1Entrega').textContent  = fmt(TAXA_ENTREGA)
-  document.getElementById('r1Total').textContent    = fmt(subtotal + TAXA_ENTREGA)
+  document.getElementById('r1Entrega').textContent  = fmt(taxaEntregaReal)   // ✅ taxa real
+  document.getElementById('r1Total').textContent    = fmt(subtotal + taxaEntregaReal)
 }
 
-/* ---------- PASSO 2 — endereços salvos ---------- */
+// ─── PASSO 2 — ENDEREÇOS SALVOS + CEP ────────────────────────────────────────
 function renderPasso2() {
   const usuario = getUsuario()
   if (usuario?.nome) document.getElementById('cNome').value = usuario.nome
@@ -634,18 +778,28 @@ function renderPasso2() {
         document.getElementById('cEndereco').value = end.rua + ', ' + end.numero
         document.getElementById('cBairro').value   = end.bairro
         document.getElementById('cCep').value      = end.cep
+        // ✅ NOVO — busca frete automaticamente ao selecionar endereço salvo
+        buscarCep(end.cep)
       } else {
         document.getElementById('cEndereco').value = ''
         document.getElementById('cBairro').value   = ''
         document.getElementById('cCep').value      = ''
+        document.getElementById('freteInfo').style.display = 'none'
+        taxaEntregaReal = TAXA_ENTREGA
       }
     }
   } else {
     wrapper.style.display = 'none'
   }
+
+  // ✅ NOVO — busca CEP automaticamente quando o usuário sai do campo (evento blur)
+  // "blur" = evento que dispara quando o campo perde o foco
+  document.getElementById('cCep').addEventListener('blur', (e) => {
+    buscarCep(e.target.value)
+  })
 }
 
-/* ---------- MONTAR PAYLOAD ENDEREÇO ---------- */
+// ─── MONTAR PAYLOAD ENDEREÇO ─────────────────────────────────────────────────
 function montarPayloadEndereco() {
   const select = document.getElementById('selectEndereco')
   if (select?.value) {
@@ -666,7 +820,7 @@ function montarPayloadEndereco() {
   }
 }
 
-/* ---------- PAGAMENTO ---------- */
+// ─── PAGAMENTO ───────────────────────────────────────────────────────────────
 document.querySelectorAll('.opcao-pag').forEach(op => {
   op.onclick = () => {
     document.querySelectorAll('.opcao-pag').forEach(o => o.classList.remove('selecionada'))
@@ -680,7 +834,7 @@ document.querySelectorAll('.opcao-pag').forEach(op => {
 })
 document.getElementById('copiarPix').onclick = () => mostrarToast('Código pix copiado', 'sacola')
 
-/* ---------- NAVEGAÇÃO PASSOS ---------- */
+// ─── NAVEGAÇÃO PASSOS ────────────────────────────────────────────────────────
 document.getElementById('irPasso2').onclick     = () => irParaPasso(2)
 document.getElementById('voltarPasso1').onclick = () => irParaPasso(1)
 document.getElementById('irPasso3').onclick     = () => {
@@ -703,7 +857,7 @@ document.getElementById('irPasso4').onclick     = async () => {
   await finalizarPedido()
 }
 
-/* ---------- FINALIZAR PEDIDO (API REAL) ---------- */
+// ─── FINALIZAR PEDIDO ────────────────────────────────────────────────────────
 async function finalizarPedido() {
   const btn = document.getElementById('irPasso4')
   btn.disabled    = true
@@ -739,7 +893,6 @@ async function finalizarPedido() {
       return
     }
 
-    // Confirmação com dados reais da API
     const pedido   = data.pedido
     const nomesPag = { PIX: 'Pix', CARTAO: 'Cartão de crédito', DINHEIRO: 'Dinheiro' }
     document.getElementById('numeroPedido').textContent  = '#' + String(pedido.id).padStart(6, '0')
@@ -760,13 +913,16 @@ async function finalizarPedido() {
   }
 }
 
-/* ---------- NOVO PEDIDO ---------- */
+// ─── NOVO PEDIDO ─────────────────────────────────────────────────────────────
 document.getElementById('btnNovoPedido').onclick = () => {
   carrinho        = {}
   metodoPagamento = null
+  taxaEntregaReal = TAXA_ENTREGA  // ✅ reseta a taxa de entrega
   document.querySelectorAll('.opcao-pag').forEach(o => o.classList.remove('selecionada'))
   document.querySelectorAll('.detalhe-pagamento').forEach(d => d.classList.remove('mostrar'))
   document.querySelectorAll('#cNome,#cTelefone,#cCep,#cEndereco,#cBairro,#cComplemento').forEach(i => i.value = '')
+  document.getElementById('freteInfo').style.display = 'none'  // ✅ esconde card de frete
+  document.getElementById('cepStatus').textContent   = ''       // ✅ limpa status do CEP
   const select = document.getElementById('selectEndereco')
   if (select) select.value = ''
   const btn = document.getElementById('irPasso4')
@@ -777,12 +933,13 @@ document.getElementById('btnNovoPedido').onclick = () => {
   fecharCheckoutFn()
 }
 
-/* ---------- INIT ---------- */
+// ─── INIT ────────────────────────────────────────────────────────────────────
 async function init() {
   aplicarEstadoConta()
   await carregarCategorias()
   await carregarProdutos()
   await carregarEnderecosSalvos()
+  await carregarCarrinhoDoBackend()  // ✅ NOVO — carrega carrinho salvo no banco
   atualizarBadges()
 }
 

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "cd backend && node server.js",
-    "start": "node server.js"
+      "build": "npx prisma generate",
+      "start": "node src/backend/server.js"
   },
   "keywords": [],
   "author": "",
