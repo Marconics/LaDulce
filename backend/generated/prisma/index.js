@@ -251,7 +251,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Marquinhos lindo 123\\LaDulce\\backend\\generated\\prisma",
+      "value": "C:\\Users\\edinh\\LaDulce\\backend\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -262,10 +262,14 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Marquinhos lindo 123\\LaDulce\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\edinh\\LaDulce\\backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -279,7 +283,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -288,8 +291,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"DATABASE_URL\")\n  directUrl = env(\"DIRECT_URL\")\n}\n\nmodel Usuario {\n  id       Int      @id @default(autoincrement())\n  nome     String\n  email    String   @unique\n  senha    String\n  telefone String?\n  role     Role     @default(CLIENTE)\n  criadoEm DateTime @default(now())\n\n  enderecos Endereco[]\n  pedidos   Pedido[]\n  carrinho  Carrinho?\n}\n\nenum Role {\n  CLIENTE\n  ADMIN\n}\n\nmodel Endereco {\n  id        Int    @id @default(autoincrement())\n  rua       String\n  numero    String\n  bairro    String\n  cidade    String\n  estado    String\n  cep       String\n  usuarioId Int\n\n  usuario Usuario  @relation(fields: [usuarioId], references: [id])\n  pedidos Pedido[]\n}\n\nmodel Categoria {\n  id        Int     @id @default(autoincrement())\n  nome      String\n  descricao String?\n\n  produtos Produto[]\n}\n\nmodel Produto {\n  id          Int     @id @default(autoincrement())\n  nome        String\n  descricao   String?\n  preco       Decimal @db.Decimal(10, 2)\n  imagemUrl   String?\n  disponivel  Boolean @default(true)\n  categoriaId Int\n\n  categoria     Categoria      @relation(fields: [categoriaId], references: [id])\n  itensPedido   ItemPedido[]\n  itensCarrinho ItemCarrinho[]\n}\n\nmodel Pedido {\n  id         Int          @id @default(autoincrement())\n  status     StatusPedido @default(AGUARDANDO)\n  tipo       TipoPedido\n  total      Decimal      @db.Decimal(10, 2)\n  criadoEm   DateTime     @default(now())\n  usuarioId  Int\n  enderecoId Int?\n\n  usuario   Usuario      @relation(fields: [usuarioId], references: [id])\n  endereco  Endereco?    @relation(fields: [enderecoId], references: [id])\n  itens     ItemPedido[]\n  pagamento Pagamento?\n  entrega   Entrega?\n}\n\nenum StatusPedido {\n  AGUARDANDO\n  EM_PREPARO\n  PRONTO\n  ENTREGUE\n  CANCELADO\n}\n\nenum TipoPedido {\n  ENTREGA\n  PRESENCIAL\n}\n\nmodel ItemPedido {\n  id            Int     @id @default(autoincrement())\n  quantidade    Int\n  precoUnitario Decimal @db.Decimal(10, 2)\n  pedidoId      Int\n  produtoId     Int\n\n  pedido  Pedido  @relation(fields: [pedidoId], references: [id])\n  produto Produto @relation(fields: [produtoId], references: [id])\n}\n\nmodel Pagamento {\n  id         Int             @id @default(autoincrement())\n  forma      FormaPagamento\n  status     StatusPagamento @default(PENDENTE)\n  valor      Decimal         @db.Decimal(10, 2)\n  externalId String?\n  pedidoId   Int             @unique\n\n  pedido Pedido @relation(fields: [pedidoId], references: [id])\n}\n\nenum FormaPagamento {\n  PIX\n  CARTAO\n  DINHEIRO\n}\n\nenum StatusPagamento {\n  PENDENTE\n  PAGO\n  RECUSADO\n  ESTORNADO\n}\n\nmodel Entrega {\n  id             Int           @id @default(autoincrement())\n  status         StatusEntrega @default(AGUARDANDO)\n  previsao       DateTime?\n  codigoRastreio String?\n  pedidoId       Int           @unique\n\n  pedido Pedido @relation(fields: [pedidoId], references: [id])\n}\n\nenum StatusEntrega {\n  AGUARDANDO\n  SAIU_PARA_ENTREGA\n  ENTREGUE\n}\n\nmodel Carrinho {\n  id        Int @id @default(autoincrement())\n  usuarioId Int @unique\n\n  usuario Usuario        @relation(fields: [usuarioId], references: [id])\n  itens   ItemCarrinho[]\n}\n\nmodel ItemCarrinho {\n  id         Int @id @default(autoincrement())\n  quantidade Int\n  carrinhoId Int\n  produtoId  Int\n\n  carrinho Carrinho @relation(fields: [carrinhoId], references: [id])\n  produto  Produto  @relation(fields: [produtoId], references: [id])\n\n  @@unique([carrinhoId, produtoId])\n}\n",
-  "inlineSchemaHash": "337fbaeed604925dbac119a35c04db78c956cc60b1c353c24355c17ef67b91ab",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"DATABASE_URL\")\n  directUrl = env(\"DIRECT_URL\")\n}\n\nmodel Usuario {\n  id       Int      @id @default(autoincrement())\n  nome     String\n  email    String   @unique\n  senha    String\n  telefone String?\n  role     Role     @default(CLIENTE)\n  criadoEm DateTime @default(now())\n\n  enderecos Endereco[]\n  pedidos   Pedido[]\n  carrinho  Carrinho?\n}\n\nenum Role {\n  CLIENTE\n  ADMIN\n}\n\nmodel Endereco {\n  id        Int    @id @default(autoincrement())\n  rua       String\n  numero    String\n  bairro    String\n  cidade    String\n  estado    String\n  cep       String\n  usuarioId Int\n\n  usuario Usuario  @relation(fields: [usuarioId], references: [id])\n  pedidos Pedido[]\n}\n\nmodel Categoria {\n  id        Int     @id @default(autoincrement())\n  nome      String\n  descricao String?\n\n  produtos Produto[]\n}\n\nmodel Produto {\n  id          Int     @id @default(autoincrement())\n  nome        String\n  descricao   String?\n  preco       Decimal @db.Decimal(10, 2)\n  imagemUrl   String?\n  disponivel  Boolean @default(true)\n  categoriaId Int\n\n  categoria     Categoria      @relation(fields: [categoriaId], references: [id])\n  itensPedido   ItemPedido[]\n  itensCarrinho ItemCarrinho[]\n}\n\nmodel Pedido {\n  id         Int          @id @default(autoincrement())\n  status     StatusPedido @default(AGUARDANDO)\n  tipo       TipoPedido\n  total      Decimal      @db.Decimal(10, 2)\n  criadoEm   DateTime     @default(now())\n  usuarioId  Int\n  enderecoId Int?\n\n  usuario   Usuario      @relation(fields: [usuarioId], references: [id])\n  endereco  Endereco?    @relation(fields: [enderecoId], references: [id])\n  itens     ItemPedido[]\n  pagamento Pagamento?\n  entrega   Entrega?\n}\n\nenum StatusPedido {\n  AGUARDANDO\n  EM_PREPARO\n  PRONTO\n  ENTREGUE\n  CANCELADO\n}\n\nenum TipoPedido {\n  ENTREGA\n  PRESENCIAL\n}\n\nmodel ItemPedido {\n  id            Int     @id @default(autoincrement())\n  quantidade    Int\n  precoUnitario Decimal @db.Decimal(10, 2)\n  pedidoId      Int\n  produtoId     Int\n\n  pedido  Pedido  @relation(fields: [pedidoId], references: [id])\n  produto Produto @relation(fields: [produtoId], references: [id])\n}\n\nmodel Pagamento {\n  id         Int             @id @default(autoincrement())\n  forma      FormaPagamento\n  status     StatusPagamento @default(PENDENTE)\n  valor      Decimal         @db.Decimal(10, 2)\n  externalId String?\n  pedidoId   Int             @unique\n\n  pedido Pedido @relation(fields: [pedidoId], references: [id])\n}\n\nenum FormaPagamento {\n  PIX\n  CARTAO\n  DINHEIRO\n}\n\nenum StatusPagamento {\n  PENDENTE\n  PAGO\n  RECUSADO\n  ESTORNADO\n}\n\nmodel Entrega {\n  id             Int           @id @default(autoincrement())\n  status         StatusEntrega @default(AGUARDANDO)\n  previsao       DateTime?\n  codigoRastreio String?\n  pedidoId       Int           @unique\n\n  pedido Pedido @relation(fields: [pedidoId], references: [id])\n}\n\nenum StatusEntrega {\n  AGUARDANDO\n  SAIU_PARA_ENTREGA\n  ENTREGUE\n}\n\nmodel Carrinho {\n  id        Int @id @default(autoincrement())\n  usuarioId Int @unique\n\n  usuario Usuario        @relation(fields: [usuarioId], references: [id])\n  itens   ItemCarrinho[]\n}\n\nmodel ItemCarrinho {\n  id         Int @id @default(autoincrement())\n  quantidade Int\n  carrinhoId Int\n  produtoId  Int\n\n  carrinho Carrinho @relation(fields: [carrinhoId], references: [id])\n  produto  Produto  @relation(fields: [produtoId], references: [id])\n\n  @@unique([carrinhoId, produtoId])\n}\n",
+  "inlineSchemaHash": "ade8429111fe0aba6ef187d4e2e6cb0d7f1ac521a20d23251e86066ef90dfd8b",
   "copyEngine": true
 }
 
@@ -330,6 +333,10 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "query_engine-windows.dll.node");
 path.join(process.cwd(), "generated/prisma/query_engine-windows.dll.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
+path.join(process.cwd(), "generated/prisma/libquery_engine-rhel-openssl-3.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "generated/prisma/schema.prisma")
