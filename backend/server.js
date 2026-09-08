@@ -9,7 +9,7 @@ import RoutesAuth from './routes/auth.js'
 import RoutesPedidos from './routes/pedidos.js'
 import RoutesUsuarios from './routes/usuarios.js'
 import RoutesEnderecos from './routes/enderecos.js'
-import RoutesCarrinho from './routes/pagamentos.js'
+import RoutesCarrinho from './routes/carrinho.js'
 import RoutesCheckout from './routes/checkout.js'
 
 const server = Fastify({ logger: true })
@@ -31,6 +31,8 @@ await server.register(RoutesAuth,       { prefix: '/auth' })
 await server.register(RoutesPedidos,    { prefix: '/pedidos' })
 await server.register(RoutesUsuarios,  { prefix: '/usuarios' })
 await server.register(RoutesEnderecos,  { prefix: '/enderecos' })
+await server.register(RoutesCarrinho,  { prefix: '/carrinho' })
+await server.register(RoutesCheckout,  { prefix: '/checkout' })
 
 await server.listen({
   host: '0.0.0.0',
