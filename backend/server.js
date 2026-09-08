@@ -9,6 +9,8 @@ import RoutesAuth from './routes/auth.js'
 import RoutesPedidos from './routes/pedidos.js'
 import RoutesUsuarios from './routes/usuarios.js'
 import RoutesEnderecos from './routes/enderecos.js'
+import RoutesCarrinho from './routes/pagamentos.js'
+import RoutesCheckout from './routes/checkout.js'
 
 const server = Fastify({ logger: true })
 

@@ -180,6 +180,7 @@ exports.Prisma.PagamentoScalarFieldEnum = {
   forma: 'forma',
   status: 'status',
   valor: 'valor',
+  externalId: 'externalId',
   pedidoId: 'pedidoId'
 };
 
@@ -187,7 +188,20 @@ exports.Prisma.EntregaScalarFieldEnum = {
   id: 'id',
   status: 'status',
   previsao: 'previsao',
+  codigoRastreio: 'codigoRastreio',
   pedidoId: 'pedidoId'
+};
+
+exports.Prisma.CarrinhoScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId'
+};
+
+exports.Prisma.ItemCarrinhoScalarFieldEnum = {
+  id: 'id',
+  quantidade: 'quantidade',
+  carrinhoId: 'carrinhoId',
+  produtoId: 'produtoId'
 };
 
 exports.Prisma.SortOrder = {
@@ -249,7 +263,9 @@ exports.Prisma.ModelName = {
   Pedido: 'Pedido',
   ItemPedido: 'ItemPedido',
   Pagamento: 'Pagamento',
-  Entrega: 'Entrega'
+  Entrega: 'Entrega',
+  Carrinho: 'Carrinho',
+  ItemCarrinho: 'ItemCarrinho'
 };
 
 /**

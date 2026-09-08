@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -26,6 +20,7 @@ model Usuario {
 
   enderecos Endereco[]
   pedidos   Pedido[]
+  carrinho  Carrinho?
 }
 
 enum Role {
@@ -64,8 +59,9 @@ model Produto {
   disponivel  Boolean @default(true)
   categoriaId Int
 
-  categoria   Categoria    @relation(fields: [categoriaId], references: [id])
-  itensPedido ItemPedido[]
+  categoria     Categoria      @relation(fields: [categoriaId], references: [id])
+  itensPedido   ItemPedido[]
+  itensCarrinho ItemCarrinho[]
 }
 
 model Pedido {
@@ -109,11 +105,12 @@ model ItemPedido {
 }
 
 model Pagamento {
-  id       Int             @id @default(autoincrement())
-  forma    FormaPagamento
-  status   StatusPagamento @default(PENDENTE)
-  valor    Decimal         @db.Decimal(10, 2)
-  pedidoId Int             @unique
+  id         Int             @id @default(autoincrement())
+  forma      FormaPagamento
+  status     StatusPagamento @default(PENDENTE)
+  valor      Decimal         @db.Decimal(10, 2)
+  externalId String?
+  pedidoId   Int             @unique
 
   pedido Pedido @relation(fields: [pedidoId], references: [id])
 }
@@ -132,10 +129,11 @@ enum StatusPagamento {
 }
 
 model Entrega {
-  id       Int           @id @default(autoincrement())
-  status   StatusEntrega @default(AGUARDANDO)
-  previsao DateTime?
-  pedidoId Int           @unique
+  id             Int           @id @default(autoincrement())
+  status         StatusEntrega @default(AGUARDANDO)
+  previsao       DateTime?
+  codigoRastreio String?
+  pedidoId       Int           @unique
 
   pedido Pedido @relation(fields: [pedidoId], references: [id])
 }
@@ -146,4 +144,22 @@ enum StatusEntrega {
   ENTREGUE
 }
 
-// prisma/schema.prisma
+model Carrinho {
+  id        Int @id @default(autoincrement())
+  usuarioId Int @unique
+
+  usuario Usuario        @relation(fields: [usuarioId], references: [id])
+  itens   ItemCarrinho[]
+}
+
+model ItemCarrinho {
+  id         Int @id @default(autoincrement())
+  quantidade Int
+  carrinhoId Int
+  produtoId  Int
+
+  carrinho Carrinho @relation(fields: [carrinhoId], references: [id])
+  produto  Produto  @relation(fields: [produtoId], references: [id])
+
+  @@unique([carrinhoId, produtoId])
+}
