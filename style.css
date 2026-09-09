@@ -98,6 +98,7 @@ nav.categorias button.ativo{opacity:1;border-color:var(--mostarda);}
   border:2px solid var(--verde);
 }
 .badge.oculta{display:none;}
+.oculta{display:none;}
 .menu-mobile-btn{display:none;background:none;border:none;color:var(--creme);}
 
 /* ---------- HERO ---------- */
@@ -766,3 +767,173 @@ footer a:hover{color:var(--mostarda);}
   padding:12px 14px;font-size:15px;color:var(--tinta);font-family:inherit;resize:vertical;
 }
 .campo textarea:focus{border-color:var(--verde);outline:none;}
+
+/* ============================================================
+   PÁGINA DE PERFIL — reaproveita as variáveis e componentes acima.
+   (Antes era um arquivo perfil.css separado; juntado aqui porque
+   o deploy não estava servindo o segundo arquivo CSS.)
+   ============================================================ */
+
+/* ---------- FAIXA DE BOAS-VINDAS ---------- */
+.perfil-faixa{
+  background:var(--verde);color:var(--creme);
+  padding:40px 0 56px;
+}
+.perfil-faixa .container{
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.perfil-avatar{
+  width:64px;height:64px;border-radius:50%;flex-shrink:0;
+  background:var(--mostarda);color:var(--tinta);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-weight:700;font-size:24px;
+}
+.perfil-faixa h1{font-size:28px;color:var(--creme);}
+.perfil-faixa .perfil-meta{
+  display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;
+  font-size:13.5px;color:#EAD9D2;
+}
+.perfil-faixa .perfil-meta span{display:flex;align-items:center;gap:6px;}
+.tag-role{
+  background:var(--mostarda);color:var(--tinta);font-size:11px;font-weight:700;
+  padding:3px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;
+  align-self:flex-start;
+}
+
+/* ---------- LAYOUT PRINCIPAL ---------- */
+.perfil-layout{
+  display:grid;grid-template-columns:220px 1fr;gap:32px;
+  margin-top:-30px;padding-bottom:70px;align-items:start;
+}
+.perfil-nav{
+  background:var(--creme);border:1px solid var(--linha);border-radius:var(--radius);
+  box-shadow:var(--sombra);padding:10px;display:flex;flex-direction:column;gap:2px;
+  position:sticky;top:95px;
+}
+.perfil-nav button{
+  display:flex;align-items:center;gap:10px;background:none;border:none;
+  text-align:left;padding:12px 14px;border-radius:10px;font-size:14.5px;font-weight:600;
+  color:var(--tinta-suave);transition:background .15s,color .15s;width:100%;
+}
+.perfil-nav button svg{width:17px;height:17px;flex-shrink:0;}
+.perfil-nav button:hover{background:var(--papel-2);color:var(--tinta);}
+.perfil-nav button.ativo{background:var(--verde);color:var(--creme);}
+.perfil-nav hr{border:none;border-top:1px solid var(--linha);margin:8px 6px;}
+.perfil-nav button.sair{color:var(--tijolo-escuro);}
+.perfil-nav button.sair:hover{background:#FBEAE7;}
+
+/* tabs em chip para mobile — escondidas por padrão (só aparecem em telas pequenas) */
+.perfil-tabs-mobile{display:none;}
+
+.perfil-conteudo{display:flex;flex-direction:column;gap:22px;}
+.perfil-painel{display:none;flex-direction:column;gap:22px;}
+.perfil-painel.ativo{display:flex;}
+
+.perfil-bloco{
+  background:var(--creme);border:1px solid var(--linha);border-radius:var(--radius);
+  box-shadow:var(--sombra);padding:26px 26px 28px;
+}
+.perfil-bloco-topo{
+  display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:18px;
+}
+.perfil-bloco-topo h2{font-size:20px;}
+.perfil-bloco-topo p{margin:2px 0 0;font-size:13.5px;color:var(--tinta-suave);}
+
+/* ---------- DADOS PESSOAIS ---------- */
+.form-dados{display:flex;flex-direction:column;gap:16px;max-width:460px;}
+.form-acoes{display:flex;gap:12px;margin-top:6px;}
+.form-acoes .btn{padding:12px 22px;}
+
+/* ---------- ENDEREÇOS ---------- */
+.enderecos-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;
+}
+.endereco-card{
+  position:relative;border:1.5px solid var(--linha);border-radius:12px;background:var(--papel);
+  padding:16px 16px 14px;display:flex;flex-direction:column;gap:8px;
+}
+.endereco-card.principal{border-color:var(--verde);background:#F7E8DF;}
+.endereco-card .selo-principal{
+  position:absolute;top:12px;right:12px;background:var(--mostarda);color:var(--tinta);
+  font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;text-transform:uppercase;
+}
+.endereco-card b{font-size:14.5px;color:var(--tinta);}
+.endereco-card span{font-size:13px;color:var(--tinta-suave);line-height:1.5;}
+.endereco-card .endereco-acoes{display:flex;gap:8px;margin-top:6px;}
+.endereco-card .endereco-acoes button{
+  background:none;border:none;font-size:12.5px;font-weight:600;text-decoration:underline;padding:0;
+  color:var(--tinta-suave);
+}
+.endereco-card .endereco-acoes button:hover{color:var(--verde);}
+.endereco-card .endereco-acoes button.excluir:hover{color:var(--tijolo-escuro);}
+
+.endereco-novo-card{
+  border:2px dashed var(--linha);border-radius:12px;background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  min-height:140px;color:var(--tinta-suave);font-weight:600;font-size:14px;font-family:inherit;
+  transition:all .15s;
+}
+.endereco-novo-card svg{width:24px;height:24px;}
+.endereco-novo-card:hover{border-color:var(--verde);color:var(--verde);background:var(--papel);}
+
+/* ---------- PEDIDOS ---------- */
+.pedidos-lista{display:flex;flex-direction:column;gap:14px;}
+.pedido-card{
+  border:1px solid var(--linha);border-radius:12px;background:var(--papel);overflow:hidden;
+}
+.pedido-cabecalho{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:14px 18px;cursor:pointer;
+}
+.pedido-cabecalho .pedido-id{font-family:'Fraunces',serif;font-weight:700;font-size:15.5px;color:var(--tinta);}
+.pedido-cabecalho .pedido-data{font-size:12.5px;color:var(--tinta-suave);}
+.pedido-cabecalho-info{display:flex;flex-direction:column;gap:2px;}
+.pedido-direita{display:flex;align-items:center;gap:14px;}
+.pedido-total{font-family:'Fraunces',serif;font-weight:700;color:var(--tijolo-escuro);font-size:15px;}
+.pedido-seta{width:16px;height:16px;color:var(--tinta-suave);transition:transform .2s;flex-shrink:0;}
+.pedido-card.aberto .pedido-seta{transform:rotate(180deg);}
+
+.status-badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+  padding:5px 12px;border-radius:999px;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;
+}
+.status-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;}
+.status-aguardando{background:#FBEEDE;color:#9C6A2E;}
+.status-em_preparo{background:#F8DCDA;color:#B76E68;}
+.status-pronto{background:#FBDAD6;color:#B5453E;}
+.status-entregue{background:#E3EFE2;color:#4C7A4A;}
+.status-cancelado{background:#EFE3E1;color:#8C6A60;}
+
+.pedido-detalhe{
+  display:none;padding:0 18px 18px;border-top:1px dashed var(--linha);
+}
+.pedido-card.aberto .pedido-detalhe{display:block;padding-top:14px;}
+.pedido-item-linha{
+  display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;color:var(--tinta-suave);
+}
+.pedido-item-linha span:last-child{color:var(--tinta);font-weight:600;}
+.pedido-sub{
+  display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;padding-top:12px;
+  border-top:1px dashed var(--linha);font-size:12.5px;color:var(--tinta-suave);
+}
+.pedido-sub b{color:var(--tinta);}
+
+.pedidos-vazio{text-align:center;padding:50px 20px;color:var(--tinta-suave);}
+.pedidos-vazio .prato-icone{margin:0 auto 14px;width:56px;height:56px;}
+
+/* ---------- RESPONSIVO DO PERFIL ---------- */
+@media (max-width:860px){
+  .perfil-layout{grid-template-columns:1fr;}
+  .perfil-nav{display:none;}
+  .perfil-tabs-mobile{
+    display:flex;gap:10px;overflow-x:auto;padding:4px 2px 6px;
+    position:sticky;top:75px;background:var(--papel);z-index:40;margin-top:-30px;
+  }
+  .perfil-faixa{padding-bottom:70px;}
+  .perfil-bloco{padding:20px 18px 22px;}
+}
+@media (max-width:480px){
+  .perfil-faixa .container{gap:14px;}
+  .perfil-avatar{width:52px;height:52px;font-size:19px;}
+  .perfil-faixa h1{font-size:22px;}
+}

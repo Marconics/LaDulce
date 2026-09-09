@@ -7,17 +7,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="perfil.css">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <header>
   <div class="header-inner">
-    <a class="logo" href="index.html"><div class="logo-text"><span class="nome" style="color:var(--creme);font-family:'Fraunces',serif;font-weight:700;font-size:21px;">LaDulce</span></div></a>
+    <a class="logo" href="index.html"><div class="logo-text"><img src="fotos/logo.png" alt="LaDulce" width="150"></div></a>
     <nav class="categorias"><a href="index.html" style="color:var(--creme);opacity:.85;font-size:15px;">← Voltar ao cardápio</a></nav>
     <div class="header-actions"><button class="icon-btn" id="btnSairTopo" aria-label="Sair da conta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button></div>
   </div>
 </header>
+<div class="admin-faixa oculta" id="faixaAdmin">
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="tag-admin">Admin</span>
+      <span>Você tem acesso ao painel administrativo</span>
+    </div>
+    <a href="admin.html">Ir para o painel administrativo →</a>
+  </div>
+</div>
 <section class="perfil-faixa">
   <div class="container">
     <div class="perfil-avatar" id="perfilAvatar">—</div>
@@ -124,6 +132,7 @@ function renderUsuario(u) {
   document.getElementById('perfilNome').textContent   = u.nome
   document.getElementById('perfilEmail').textContent  = u.email
   document.getElementById('tagAdmin').classList.toggle('oculta', u.role !== 'ADMIN')
+  document.getElementById('faixaAdmin').classList.toggle('oculta', u.role !== 'ADMIN')
   document.getElementById('fNome').value     = u.nome     || ''
   document.getElementById('fEmail').value    = u.email    || ''
   document.getElementById('fTelefone').value = u.telefone || ''
