@@ -24,12 +24,29 @@
   </div>
 </div>
 <main class="container" style="padding:40px 28px 80px;">
-  <div class="admin-topo">
-    <div><h2>Produtos</h2><p>Adicione, edite ou remova os itens do cardápio da loja.</p></div>
-    <button class="btn btn-tijolo" id="btnNovoProduto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Novo produto</button>
+
+  <div class="admin-tabs" style="display:flex;gap:10px;margin-bottom:28px;">
+    <button class="btn btn-tijolo" id="tabProdutos" type="button">Produtos</button>
+    <button class="btn btn-outline" style="color:var(--tinta);border-color:var(--linha);" id="tabPedidos" type="button">Pedidos</button>
   </div>
-  <div class="admin-stats" id="adminStats"></div>
-  <div class="admin-grid" id="adminGrid"></div>
+
+  <section id="secaoProdutos">
+    <div class="admin-topo">
+      <div><h2>Produtos</h2><p>Adicione, edite ou remova os itens do cardápio da loja.</p></div>
+      <button class="btn btn-tijolo" id="btnNovoProduto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Novo produto</button>
+    </div>
+    <div class="admin-stats" id="adminStats"></div>
+    <div class="admin-grid" id="adminGrid"></div>
+  </section>
+
+  <section id="secaoPedidos" style="display:none;">
+    <div class="admin-topo">
+      <div><h2>Pedidos</h2><p>Acompanhe os pedidos recebidos e atualize o status de cada um.</p></div>
+    </div>
+    <div class="admin-stats" id="pedidosStats"></div>
+    <div id="pedidosLista"></div>
+  </section>
+
 </main>
 <div class="overlay" id="overlay"></div>
 <aside class="drawer" id="drawerProduto" aria-label="Formulário de produto">
@@ -84,6 +101,7 @@ if (!token || !usuarioLogado || usuarioLogado.role !== 'ADMIN') {
 
 const API_PRODUTOS   = 'https://ladulce.onrender.com/produtos'
 const API_CATEGORIAS = 'https://ladulce.onrender.com/categorias'
+const API_PEDIDOS    = 'https://ladulce.onrender.com/pedidos'
 const fmt = v => "R$ " + Number(v).toFixed(2).replace(".", ",")
 let editandoId = null
 
@@ -200,6 +218,147 @@ function mostrarToast(msg) {
   toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>' + msg + '</span>'
   toast.classList.add('mostrar'); clearTimeout(toastTimeout); toastTimeout = setTimeout(() => toast.classList.remove('mostrar'), 2400)
 }
+
+/* ==========================================================================
+   ABA "PEDIDOS"
+   Reaproveita apiFetch, mostrarToast e as classes de botão que já existem.
+   GET /pedidos/listar retorna todos os pedidos (backend detecta que quem
+   chama é ADMIN pelo token). PUT /pedidos/:id/status já valida ADMIN.
+   ========================================================================== */
+const STATUS_LABEL = {
+  AGUARDANDO: 'Aguardando',
+  EM_PREPARO: 'Em preparo',
+  PRONTO:     'Pronto',
+  ENTREGUE:   'Entregue',
+  CANCELADO:  'Cancelado'
+}
+
+const STATUS_COR = {
+  AGUARDANDO: '#a68a5b',
+  EM_PREPARO: '#3b6ea5',
+  PRONTO:     '#2f9e5c',
+  ENTREGUE:   '#4c4c4c',
+  CANCELADO:  '#b23b3b'
+}
+
+async function renderPedidos() {
+  const box = document.getElementById('pedidosLista')
+  box.innerHTML = '<p style="opacity:.5;padding:20px 0;">Carregando pedidos...</p>'
+
+  let pedidos = []
+  try {
+    const data = await apiFetch(API_PEDIDOS + '/listar')
+    pedidos = data.pedidos ?? []
+  } catch (e) {
+    box.innerHTML = '<p style="color:red;padding:20px 0;">Erro ao carregar pedidos.</p>'
+    return
+  }
+
+  renderPedidosStats(pedidos)
+
+  if (pedidos.length === 0) {
+    box.innerHTML = '<p style="opacity:.5;padding:20px 0;">Nenhum pedido registrado ainda.</p>'
+    return
+  }
+
+  box.innerHTML = `
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="text-align:left;border-bottom:1px solid var(--linha);">
+          <th style="padding:10px 8px;">#</th>
+          <th style="padding:10px 8px;">Cliente</th>
+          <th style="padding:10px 8px;">Itens</th>
+          <th style="padding:10px 8px;">Tipo</th>
+          <th style="padding:10px 8px;">Total</th>
+          <th style="padding:10px 8px;">Pagamento</th>
+          <th style="padding:10px 8px;">Data</th>
+          <th style="padding:10px 8px;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${pedidos.map(pedidoLinha).join('')}
+      </tbody>
+    </table>
+    </div>
+  `
+}
+
+function pedidoLinha(p) {
+  const itensResumo = (p.itens || []).map(i => `${i.quantidade}x ${i.produto?.nome ?? ''}`).join(', ')
+  const dataFormatada = new Date(p.criadoEm).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+
+  return `
+    <tr style="border-bottom:1px solid var(--linha);">
+      <td style="padding:10px 8px;">#${p.id}</td>
+      <td style="padding:10px 8px;">${p.usuario?.nome ?? '-'}<br><span style="opacity:.6;font-size:12px;">${p.usuario?.email ?? ''}</span></td>
+      <td style="padding:10px 8px;max-width:220px;">${itensResumo}</td>
+      <td style="padding:10px 8px;">${p.tipo === 'ENTREGA' ? 'Entrega' : 'Presencial'}</td>
+      <td style="padding:10px 8px;">${fmt(p.total)}</td>
+      <td style="padding:10px 8px;">${p.pagamento?.forma ?? '-'}</td>
+      <td style="padding:10px 8px;">${dataFormatada}</td>
+      <td style="padding:10px 8px;">
+        <select onchange="atualizarStatusPedido(${p.id}, this.value)" style="border:1px solid var(--linha);border-radius:6px;padding:6px 8px;color:${STATUS_COR[p.status]};font-weight:600;">
+          ${Object.keys(STATUS_LABEL).map(s => `<option value="${s}" ${s === p.status ? 'selected' : ''}>${STATUS_LABEL[s]}</option>`).join('')}
+        </select>
+      </td>
+    </tr>
+  `
+}
+
+function renderPedidosStats(pedidos) {
+  const box = document.getElementById('pedidosStats')
+  const total = pedidos.length
+  const aguardando = pedidos.filter(p => p.status === 'AGUARDANDO').length
+  const emAndamento = pedidos.filter(p => ['EM_PREPARO', 'PRONTO'].includes(p.status)).length
+  const entregues = pedidos.filter(p => p.status === 'ENTREGUE').length
+
+  box.innerHTML = `
+    <div class="admin-stat"><span>Total de pedidos</span><strong>${total}</strong></div>
+    <div class="admin-stat"><span>Aguardando</span><strong>${aguardando}</strong></div>
+    <div class="admin-stat"><span>Em andamento</span><strong>${emAndamento}</strong></div>
+    <div class="admin-stat"><span>Entregues</span><strong>${entregues}</strong></div>
+  `
+}
+
+async function atualizarStatusPedido(id, novoStatus) {
+  try {
+    await apiFetch(API_PEDIDOS + `/${id}/status`, { method: 'PUT', body: JSON.stringify({ status: novoStatus }) })
+    mostrarToast('Status do pedido #' + id + ' atualizado para ' + STATUS_LABEL[novoStatus])
+    renderPedidos()
+  } catch (e) {
+    mostrarToast('Erro ao atualizar status: ' + e.message)
+    renderPedidos() // reverte o select pro valor real salvo no banco
+  }
+}
+
+/* Alternância entre as abas "Produtos" e "Pedidos" */
+function alternarAba(aba) {
+  const secaoProdutos = document.getElementById('secaoProdutos')
+  const secaoPedidos  = document.getElementById('secaoPedidos')
+  const tabProdutos   = document.getElementById('tabProdutos')
+  const tabPedidos    = document.getElementById('tabPedidos')
+
+  if (aba === 'produtos') {
+    secaoProdutos.style.display = ''
+    secaoPedidos.style.display  = 'none'
+    tabProdutos.className = 'btn btn-tijolo'
+    tabPedidos.className  = 'btn btn-outline'
+    tabPedidos.style.color = 'var(--tinta)'
+    tabPedidos.style.borderColor = 'var(--linha)'
+  } else {
+    secaoProdutos.style.display = 'none'
+    secaoPedidos.style.display  = ''
+    tabPedidos.className  = 'btn btn-tijolo'
+    tabProdutos.className = 'btn btn-outline'
+    tabProdutos.style.color = 'var(--tinta)'
+    tabProdutos.style.borderColor = 'var(--linha)'
+    renderPedidos()
+  }
+}
+
+document.getElementById('tabProdutos').onclick = () => alternarAba('produtos')
+document.getElementById('tabPedidos').onclick  = () => alternarAba('pedidos')
 
 carregarCategorias(); renderGrid()
 </script>

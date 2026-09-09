@@ -161,13 +161,22 @@ export default async function RoutesPedidos(app) {
   })
 
   // GET /pedidos/listar
+  //
+  // ALTERAÇÃO: antes retornava só os pedidos do próprio usuário.
+  // Agora, se quem está chamando é ADMIN, retorna TODOS os pedidos da loja
+  // (com os dados do cliente incluídos), para alimentar o painel admin.
+  // Um cliente comum continua vendo só o próprio histórico, como antes.
   app.get('/listar', async (request, reply) => {
     const usuarioId = request.user.id
+    const isAdmin = request.user.role === 'ADMIN'
 
     const pedidos = await prisma.pedido.findMany({
-      where: { usuarioId },
+      where: isAdmin ? {} : { usuarioId },
       orderBy: { criadoEm: 'desc' },
       include: {
+        usuario: {
+          select: { id: true, nome: true, email: true, telefone: true }
+        },
         itens: {
           include: {
             produto: true
@@ -189,6 +198,9 @@ export default async function RoutesPedidos(app) {
     const pedido = await prisma.pedido.findUnique({
       where: { id },
       include: {
+        usuario: {
+          select: { id: true, nome: true, email: true, telefone: true }
+        },
         itens: {
           include: {
             produto: true
