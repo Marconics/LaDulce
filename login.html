@@ -1,4 +1,3 @@
-<script src="/config.js"></script>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,143 +10,64 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
 <header>
   <div class="header-inner">
-    <div class="logo">
-      <div class="logo-text">
-        <img src="fotos/logo.png" alt="LaDulce" width="120">
-      </div>
-    </div>
+    <div class="logo"><div class="logo-text"><img src="fotos/logo.png" alt="LaDulce" width="120"></div></div>
     <nav class="categorias"></nav>
-    <div class="header-actions">
-      <a href="index.html" class="btn btn-outline" style="color:var(--creme);padding:9px 18px;font-size:13.5px;">Voltar à loja</a>
-    </div>
+    <div class="header-actions"><a href="index.html" class="btn btn-outline" style="color:var(--creme);padding:9px 18px;font-size:13.5px;">Voltar à loja</a></div>
   </div>
 </header>
-
 <section class="auth-tela">
   <div class="auth-marca">
     <div class="eyebrow"><span class="traco"></span> Que bom te ver de novo!</div>
     <h1>Entre na sua conta e continue pedindo</h1>
     <p>Acompanhe seus pedidos, guarde seus favoritos e finalize sua compra mais rápido da próxima vez.</p>
     <ul>
-      <li>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
-        Histórico dos seus pedidos
-      </li>
-      <li>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
-        Favoritos salvos na sua conta
-      </li>
-      <li>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
-        Checkout mais rápido
-      </li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Histórico dos seus pedidos</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Favoritos salvos na sua conta</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Checkout mais rápido</li>
     </ul>
   </div>
-
   <div class="auth-formulario">
     <div class="auth-card">
       <h2>Entrar</h2>
       <p class="auth-sub">Informe seus dados para acessar sua conta.</p>
-
       <form class="auth-form" id="formLogin">
-        <div class="campo">
-          <label for="lEmail">E-mail</label>
-          <input id="lEmail" type="email" placeholder="voce@email.com" required>
-        </div>
-
-        <div class="campo">
-          <label for="lSenha">Senha</label>
-          <div class="campo-senha">
-            <input id="lSenha" type="password" placeholder="Sua senha" required>
-            <button type="button" class="toggle-senha" data-alvo="lSenha" aria-label="Mostrar senha">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-        </div>
-
+        <div class="campo"><label for="lEmail">E-mail</label><input id="lEmail" type="email" placeholder="voce@email.com" required></div>
+        <div class="campo"><label for="lSenha">Senha</label><div class="campo-senha"><input id="lSenha" type="password" placeholder="Sua senha" required><button type="button" class="toggle-senha" data-alvo="lSenha" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
         <button type="submit" class="btn btn-tijolo btn-full" id="btnEntrar">Entrar</button>
       </form>
-
       <p class="auth-rodape">Ainda não tem conta? <a href="cadastro.html">Criar conta</a></p>
     </div>
   </div>
 </section>
-
 <div class="toast" id="toast"></div>
-
 <script>
-const API = '${API_URL}/auth'
-
-/* ---------- TOGGLE SENHA ---------- */
+const API = 'https://ladulce.onrender.com/auth'
 document.querySelectorAll('.toggle-senha').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const alvo = document.getElementById(btn.dataset.alvo)
-    alvo.type = alvo.type === 'password' ? 'text' : 'password'
-  })
+  btn.addEventListener('click', () => { const alvo = document.getElementById(btn.dataset.alvo); alvo.type = alvo.type === 'password' ? 'text' : 'password' })
 })
-
-/* ---------- TOAST ---------- */
 let toastTimeout
 function mostrarToast(msg) {
   const toast = document.getElementById('toast')
   toast.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span>' + msg + '</span>'
-  toast.classList.add('mostrar')
-  clearTimeout(toastTimeout)
-  toastTimeout = setTimeout(() => toast.classList.remove('mostrar'), 2400)
+  toast.classList.add('mostrar'); clearTimeout(toastTimeout); toastTimeout = setTimeout(() => toast.classList.remove('mostrar'), 2400)
 }
-
-/* ---------- REDIRECIONAR SE JÁ LOGADO ---------- */
-if (localStorage.getItem('token')) {
-  window.location.href = 'index.html'
-}
-
-/* ---------- LOGIN ---------- */
+if (localStorage.getItem('token')) window.location.href = 'index.html'
 document.getElementById('formLogin').addEventListener('submit', async e => {
   e.preventDefault()
-
-  const btn = document.getElementById('btnEntrar')
-  btn.disabled = true
-  btn.textContent = 'Entrando...'
-
-  const email = document.getElementById('lEmail').value.trim()
-  const senha = document.getElementById('lSenha').value
-
+  const btn = document.getElementById('btnEntrar'); btn.disabled = true; btn.textContent = 'Entrando...'
+  const email = document.getElementById('lEmail').value.trim(), senha = document.getElementById('lSenha').value
   try {
-    const res = await fetch(API + '/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, senha })
-    })
-
+    const res = await fetch(API + '/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, senha }) })
     const data = await res.json()
-
-    if (!res.ok) {
-      mostrarToast(data.mensagem || 'Erro ao fazer login')
-      return
-    }
-
-    // Salva token e dados do usuário no localStorage
-    localStorage.setItem('token', data.token)
-    localStorage.setItem('usuario', JSON.stringify(data.usuario))
-
+    if (!res.ok) { mostrarToast(data.mensagem || 'Erro ao fazer login'); return }
+    localStorage.setItem('token', data.token); localStorage.setItem('usuario', JSON.stringify(data.usuario))
     mostrarToast('Bem-vindo, ' + data.usuario.nome + '!')
-
-    // Redireciona após o toast
-    setTimeout(() => {
-      window.location.href = 'index.html'
-    }, 1000)
-
-  } catch (err) {
-    mostrarToast('Erro ao conectar com o servidor')
-  } finally {
-    btn.disabled = false
-    btn.textContent = 'Entrar'
-  }
+    setTimeout(() => { window.location.href = 'index.html' }, 1000)
+  } catch (err) { mostrarToast('Erro ao conectar com o servidor') }
+  finally { btn.disabled = false; btn.textContent = 'Entrar' }
 })
 </script>
-
 </body>
 </html>
