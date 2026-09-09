@@ -1,4 +1,3 @@
-<script src="/config.js"></script>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -376,9 +375,11 @@ async function sincronizarQuantidadeBackend(produtoId, quantidade) {
 //
 // Como funciona na prática:
 //   Usuário digita o CEP → frontend envia para /checkout/frete
-//   → backend consulta viacep.com.br gratuitamente
-//   → backend calcula o frete pela tabela de estados
-//   → frontend preenche os campos automaticamente
+//   → backend consulta ViaCEP (cidade/estado)
+//   → backend consulta Nominatim/OpenStreetMap (coordenadas lat/lon)
+//   → backend calcula distância com Haversine até Taubaté
+//   → backend aplica frete proporcional (mín R$6,90 / máx R$25,00 / raio 50km)
+//   → frontend preenche campos e exibe o frete calculado
 //
 async function buscarCep(cep) {
   const cepLimpo = cep.replace(/\D/g, '')
@@ -906,6 +907,11 @@ async function finalizarPedido() {
 
     irParaPasso(4)
 
+    // limpa carrinho em memória após pedido confirmado
+    carrinho = {}
+    atualizarBadges()
+    renderProdutos()
+
   } catch (e) {
     console.error('Erro ao finalizar pedido:', e)
     mostrarToast('Erro de conexão. Tente novamente.', 'sacola')
@@ -918,12 +924,12 @@ async function finalizarPedido() {
 document.getElementById('btnNovoPedido').onclick = () => {
   carrinho        = {}
   metodoPagamento = null
-  taxaEntregaReal = TAXA_ENTREGA  // ✅ reseta a taxa de entrega
+  taxaEntregaReal = TAXA_ENTREGA 
   document.querySelectorAll('.opcao-pag').forEach(o => o.classList.remove('selecionada'))
   document.querySelectorAll('.detalhe-pagamento').forEach(d => d.classList.remove('mostrar'))
   document.querySelectorAll('#cNome,#cTelefone,#cCep,#cEndereco,#cBairro,#cComplemento').forEach(i => i.value = '')
-  document.getElementById('freteInfo').style.display = 'none'  // ✅ esconde card de frete
-  document.getElementById('cepStatus').textContent   = ''       // ✅ limpa status do CEP
+  document.getElementById('freteInfo').style.display = 'none'
+  document.getElementById('cepStatus').textContent   = ''       
   const select = document.getElementById('selectEndereco')
   if (select) select.value = ''
   const btn = document.getElementById('irPasso4')
@@ -940,7 +946,7 @@ async function init() {
   await carregarCategorias()
   await carregarProdutos()
   await carregarEnderecosSalvos()
-  await carregarCarrinhoDoBackend()  // ✅ NOVO — carrega carrinho salvo no banco
+  await carregarCarrinhoDoBackend() 
   atualizarBadges()
 }
 

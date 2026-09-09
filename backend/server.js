@@ -19,7 +19,7 @@ await server.register(cors, {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 })
 
-await server.register(fastifyJwt, { secret: process.env.JWT_SECRET })
+await server.register(fastifyJwt, { secret: process.env.JWT_SECRET || 'ladulce-super-secreta-2026' })
 
 server.get('/', async () => {
   return { status: 'ok' }

@@ -64,13 +64,44 @@
 </aside>
 <div class="toast" id="toast"></div>
 <script>
+/* ==========================================================================
+   GUARD DE ACESSO — roda antes de qualquer outra coisa na página.
+   Se não tiver token, ou não tiver usuário salvo, ou o role não for ADMIN,
+   manda para o cardápio na hora (nem chega a carregar produtos/categorias).
+   IMPORTANTE: isso é só a camada de UX. A proteção de verdade tem que
+   existir no backend (produtos.js/categorias.js) verificando o JWT + role
+   nas rotas de criar/atualizar/excluir — sem isso, qualquer pessoa pode
+   chamar a API direto (Postman/curl) e ignorar essa tela completamente.
+   ========================================================================== */
+const token = localStorage.getItem('token')
+let usuarioLogado = null
+try { usuarioLogado = JSON.parse(localStorage.getItem('usuario') || 'null') } catch {}
+
+if (!token || !usuarioLogado || usuarioLogado.role !== 'ADMIN') {
+  window.location.href = 'index.html'
+  throw new Error('Acesso restrito a administradores.') // interrompe o resto do script
+}
+
 const API_PRODUTOS   = 'https://ladulce.onrender.com/produtos'
 const API_CATEGORIAS = 'https://ladulce.onrender.com/categorias'
 const fmt = v => "R$ " + Number(v).toFixed(2).replace(".", ",")
 let editandoId = null
 
+// Toda chamada à API já sai com o token — quando produtos.js/categorias.js
+// passarem a exigir ADMIN no backend, não precisa mudar nada aqui.
 async function apiFetch(url, options = {}) {
-  const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...options })
+  const res = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token,
+      ...(options.headers || {})
+    },
+    ...options
+  })
+  if (res.status === 401 || res.status === 403) {
+    window.location.href = 'index.html'
+    throw new Error('Sessão expirada ou sem permissão.')
+  }
   if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.mensagem || 'Erro na requisição') }
   return res.json().catch(() => ({}))
 }
