@@ -1,3 +1,4 @@
+<script src="/config.js"></script>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -78,7 +79,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://localhost:3333/auth'
+const API = '${API_URL}/auth'
 
 /* ---------- TOGGLE SENHA ---------- */
 document.querySelectorAll('.toggle-senha').forEach(btn => {

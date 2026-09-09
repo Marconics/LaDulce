@@ -1,3 +1,4 @@
+<script src="/config.js"></script>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -189,7 +190,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://localhost:3333'
+const API = '${API_URL}'
 const fmt     = v  => "R$ " + Number(v).toFixed(2).replace(".", ",")
 const fmtData = iso => iso ? new Date(iso).toLocaleDateString('pt-BR') : '—'
 

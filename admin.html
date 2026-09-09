@@ -1,3 +1,4 @@
+<script src="/config.js"></script>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -118,8 +119,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API_PRODUTOS    = 'http://localhost:3333/produtos'
-const API_CATEGORIAS  = 'http://localhost:3333/categorias'
+const API_PRODUTOS    = '${API_URL}/produtos'
+const API_CATEGORIAS  = '${API_URL}/categorias'
 const fmt = v => "R$ " + Number(v).toFixed(2).replace(".", ",")
 let editandoId = null
 
